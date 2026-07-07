@@ -626,6 +626,57 @@ pdf("ex7LGP.pdf", width = 13, height = 6)
 grid.arrange(p1, p2, ncol = 2)
 dev.off()
 
+
+
+#-------------------------- Example 8 ----------------------------
+set.seed(123)
+# True probability function from Example 2
+true_pi_fun <- function(x) {
+  x <- as.numeric(x)
+  0.5 * (1 + exp(-x^2) * cos(10 * (1 - exp(-x)) / (1 + exp(-x))))
+}
+
+# Simulate binomial data
+n <- 500
+Xbounds <- matrix(c(-2, 2), nrow = 1)
+
+X <- lhs(n = n, rect = Xbounds)
+true_pi <- true_pi_fun(X)
+
+m <- sample(100, n, replace = TRUE)
+y <- rbinom(n, size = m, prob = true_pi)
+
+## Fit TwinBKP model
+TwinBKP_model_1D_2 <- fit_TwinBKP(X, y, m, Xbounds = Xbounds)
+
+## Print fitted model
+print(TwinBKP_model_1D_2)
+
+## Inspect realized TwinBKP control settings
+TwinBKP_model_1D_2$control[c("g", "l", "twins")]
+
+## Prediction grid
+Xnew <- matrix(seq(-2, 2, length = 100), ncol = 1)
+
+## Posterior prediction
+TwinBKP_pred_1D_2 <- predict(TwinBKP_model_1D_2, Xnew = Xnew)
+print(TwinBKP_pred_1D_2)
+
+
+## Plot fitted TwinBKP posterior summaries
+pdf("ex8.pdf", width = 9, height = 6)
+plot(TwinBKP_model_1D_2)
+true_pi <- true_pi_fun(Xnew)
+lines(Xnew,true_pi, col = "black", lwd = 2)
+legend(x = -2.22,y = 0.85,
+       legend = "True Probability",
+       col = "black",
+       lwd = 2,
+       bty = "n",
+       inset = 0.02)
+dev.off()
+
+
 #-----------------------------------------------------------------
 # ============================================================== #
 # ========================= Real Example ======================= #
