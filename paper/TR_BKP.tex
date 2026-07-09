@@ -1447,7 +1447,7 @@ Moreover, a disc-based spatial stratification procedure is employed \citep{goldi
 \begin{CodeChunk}
 \begin{CodeInput}   
 R> # Load observation data and define training/testing splits
-R> data <- read.csv("Code/Mourning_Warbler.csv", stringsAsFactors = FALSE)
+R> data <- read.csv("code/data/Mourning_Warbler.csv", stringsAsFactors = FALSE)
 R> train_idx <- which(data$split == "training")
 R> test_idx  <- which(data$split == "testing")
 R> bio_cols <- grep("^wc2", names(data), value = TRUE)
@@ -1461,7 +1461,7 @@ R> Xbounds <- t(apply(X_train, 2, range))
 R>
 R> # Load and crop the environmental raster for spatial projection
 R> library(terra)
-R> tif_files <- file.path("climate/wc2.1_10m", paste0(bio_cols, ".tif"))
+R> tif_files <- file.path("code/data/climate/wc2.1_10m", paste0(bio_cols, ".tif"))
 R> na_clim <- crop(rast(tif_files), ext(-170.15, -46.70, 22.23, 71.90))
 R> names(na_clim) <- bio_cols
 \end{CodeInput} 

@@ -175,12 +175,17 @@ for (method in names(all_preds)) {
     if (method == "LGP") {
       chunk_size <- 5000
       n_valid <- nrow(X_grid)
+      valid_idx <- which(grid_valid)
+      
       for (k in seq(1, n_valid, by = chunk_size)) {
         idx_end <- min(k + chunk_size - 1, n_valid)
-        chunk <- X_grid[k:idx_end, , drop = FALSE]
+        idx <- k:idx_end
+        chunk <- X_grid[idx, , drop = FALSE]
+        
         pred_chunk <- gp_pred(gp, chunk, transform = TRUE, var = TRUE)
-        gm[grid_valid][k:idx_end] <- as.vector(pred_chunk$mean)
-        gv[grid_valid][k:idx_end] <- as.vector(pred_chunk$var)
+        
+        gm[valid_idx[idx]] <- as.vector(pred_chunk$mean)
+        gv[valid_idx[idx]] <- as.vector(pred_chunk$var)
       }
     } else {
       fit_obj <- if (method == "BKP") bkp_fit else twin_fit
