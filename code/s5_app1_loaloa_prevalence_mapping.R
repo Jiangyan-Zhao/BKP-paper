@@ -126,6 +126,9 @@ all_vmax <- sapply(raster_preds, function(x) max(x$variance, na.rm = TRUE))
 vlim <- ceiling(max(all_vmax) * 10) / 10
 
 # ---- Per‑model maps (probability + variance) ----------------------
+sub_labels <- c("(a)", "(b)", "(c)", "(d)")
+sub_idx <- 1
+
 all_probs <- list()
 all_vars  <- list()
 for (method in names(raster_preds)) {
@@ -154,7 +157,7 @@ for (method in names(raster_preds)) {
       )
     ) +
     coord_sf(xlim = Xbounds[1, ], ylim = Xbounds[2, ], expand = FALSE) +
-    labs(title = paste(method, "- Predicted distribution"),
+    labs(title = paste(sub_labels[sub_idx], method, "- Predicted distribution"),
          x = "Longitude", y = "Latitude") +
     theme_minimal(12) + theme(
       plot.title = element_text(hjust = 0.5, face = "bold"),
@@ -163,6 +166,7 @@ for (method in names(raster_preds)) {
       legend.ticks.length = unit(0.2, "cm"),
       legend.title = element_text(angle = 90, hjust = 0.5, vjust = 0.5, size = 10)
     )
+  sub_idx <- sub_idx + 1
   # ggsave(sprintf("Loaloa_%s_prob.pdf", tolower(method)),
   #        p_prob, width = 6.5, height = 3.8, dpi = 300)
   
@@ -182,7 +186,7 @@ for (method in names(raster_preds)) {
       )
     ) +
     coord_sf(xlim = Xbounds[1, ], ylim = Xbounds[2, ], expand = FALSE) +
-    labs(title = paste(method, "- Prediction uncertainty"),
+    labs(title = paste(sub_labels[sub_idx], method, "- Prediction uncertainty"),
          x = "Longitude", y = "Latitude") +
     theme_minimal(12) + theme(
       plot.title = element_text(hjust = 0.5, face = "bold"),
@@ -191,6 +195,7 @@ for (method in names(raster_preds)) {
       legend.ticks.length = unit(0.2, "cm"),
       legend.title = element_text(angle = 90, hjust = 0.5, vjust = 0.5, size = 10)
     )
+  sub_idx <- sub_idx + 1
   # ggsave(sprintf("Loaloa_%s_var.pdf", tolower(method)),
   #        p_var, width = 6.5, height = 3.8, dpi = 300)
   

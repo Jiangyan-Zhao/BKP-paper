@@ -13,7 +13,7 @@
 \usepackage{subcaption} 
 \usepackage{rotating, threeparttable, booktabs, caption, dcolumn, pdflscape}
 \usepackage{dsfont, pifont}
-
+\usepackage{multirow}
 \usepackage{soul} 
 
 \usepackage{graphicx}
@@ -1604,9 +1604,64 @@ with an Intel(R) Xeon(R) W-2235 CPU at 3.80GHz and 16 GB RAM.
 %% -- Appendix (if any) --------------------------------------------------------
 %% - After the bibliography with page break.
 %% - With proper section titles and _not_ just "Appendix".
+\newpage
+\appendix
+\section{Evaluation of Predictive Uncertainty and Coverage} \label{app:coverage}
 
+To evaluate the predictive uncertainty quantification of the \pkg{BKP} package, we conduct a simulation study based on the highly nonlinear 1D oscillating probability function from Example~2 (Equation~\ref{eq:bkp-1d-generate-function-2}). We compare the standard BKP model (\code{ess = "none"}), the BKP model with Shepard effective-sample-size calibration (\code{ess = "shepard"}), and the Logistic Gaussian Process (LGP) model.
 
+To systematically assess the quality of the $(1-\alpha)$ posterior credible intervals $[L(\vec{x}), U(\vec{x})]$ against the true probability surface $\pi(\vec{x})$, we focus on the Prediction Interval Coverage Probability (PICP). For a nominal $95\%$ confidence level, we set $\alpha = 0.05$. In each single simulation run, the empirical coverage rate is computed as the average over $N$ specific evaluation points:
+\[
+    \mathrm{PICP} = \frac{1}{N} \sum_{i=1}^{N} \mathds{1}\left\{ L(\vec{x}_i) \leq \pi(\vec{x}_i) \leq U(\vec{x}_i) \right\}.
+\]
 
+We consider two sample size settings: $n = 30$ and $n = 100$. For each setting, the experiment is independently repeated 2,000 times. Within each of the 2,000 replications, the PICP is evaluated in two distinct ways: (1) on the original $n$ training locations (where $N = 30$ or $100$), and (2) on a dense uniform grid of $N = 2000$ evaluation points evenly spaced across the input space. The final reported coverage metrics are the mean and standard deviation (SD) of these PICP values aggregated across the 2,000 independent replications. A reliable model should yield a mean coverage rate close to or slightly above the nominal 95\% level.
+
+Figure~\ref{fig:ex2_combined} visualizes the estimated probability surfaces and the corresponding 95\% credible intervals based on a \emph{single} simulation run, evaluated over the 2,000 grid points. Table~\ref{tab:coverage_results} summarizes the mean coverage rates and their standard deviations across all 2,000 replications.
+
+\begin{figure}[!t]
+    \centering 
+    \includegraphics[width=0.9\linewidth]{ex2_combined.pdf}  
+    \caption{Visualization of predictive means and 95\% credible intervals based on a single simulation run over the 2,000 grid points for Example~2. The rows represent standard BKP, ESS-calibrated BKP-ESS, and LGP, respectively. The left column shows the results for $n=30$ and the right column for $n=100$.}
+    \label{fig:ex2_combined}
+\end{figure}
+
+\begin{table}[!t]
+  \centering
+  \caption{Summary of empirical coverage rates (Nominal 95\%). The mean and standard deviation (SD) are calculated across 2000 independent replications. Results are presented for both the dense grid (2000 points) and the original training points across different sample sizes ($n=30, 100$).}
+  \label{tab:coverage_results}
+  \begin{tabular}{lllc}
+    \toprule
+    \textbf{Evaluation} & \textbf{Config} & \textbf{Model} & \textbf{Coverage (\%)} \\
+    \midrule
+    \multirow{6}{*}{\textbf{Grid}} 
+    & \multirow{3}{*}{$n=30$} 
+      & BKP    & 86.5 (SD=6.8) \\
+    & & BKP-ESS & 93.7 (SD=3.2) \\
+    & & LGP           & 91.3 (SD=4.4) \\
+    \cmidrule{2-4}
+    & \multirow{3}{*}{$n=100$} 
+      & BKP    & 90.7 (SD=5.0) \\
+    & & BKP-ESS & 97.7 (SD=0.9) \\
+    & & LGP           & 89.3 (SD=4.3) \\
+    \midrule
+    \multirow{6}{*}{\textbf{Training}} 
+    & \multirow{3}{*}{$n=30$} 
+      & BKP    & 87.2 (SD=7.1) \\
+    & & BKP-ESS & 94.3 (SD=3.6) \\
+    & & LGP           & 91.0 (SD=5.0) \\
+    \cmidrule{2-4}
+    & \multirow{3}{*}{$n=100$} 
+      & BKP    & 90.7 (SD=5.0) \\
+    & & BKP-ESS & 97.7 (SD=1.1) \\
+    & & LGP           & 89.3 (SD=4.4) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The results demonstrate that the standard BKP model (\code{none}) suffers from under-coverage, with mean coverage rates ranging between $86.5\%$ and $90.7\%$, falling consistently short of the 95\% target. The LGP model exhibits similar under-coverage behavior, centering around $89\%-91\%$.
+
+In contrast, enabling the Shepard effective-sample-size calibration (\code{BKP-ESS}) substantially improves the coverage probability, bringing it remarkably close to or slightly above the nominal $95\%$ level (up to $97.7\%$ when $n=100$). This calibration effectively rescales the pseudo-count contributions to account for variations in local data density, thereby correcting the severe under-coverage issue. These findings demonstrate that when reliable coverage is the primary inferential goal, the ESS calibration method provides a far more robust and statistically valid uncertainty quantification.
 %% -----------------------------------------------------------------------------
 
 

@@ -199,6 +199,9 @@ for (method in names(all_preds)) {
 
 # ---- Per‑model maps (probability + variance) ----------------------
 cat("\n===== Generating maps =====\n")
+sub_labels <- c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)")
+sub_idx <- 1
+
 all_probs <- list()
 all_vars  <- list()
 for (method in names(raster_preds)) {
@@ -221,7 +224,7 @@ for (method in names(raster_preds)) {
       )
     ) +
     coord_quickmap(xlim = c(-170, -50), ylim = c(15, 75), expand = FALSE) +
-    labs(title = paste(method, "- Predicted distribution"), x = NULL, y = NULL) +
+    labs(title = paste(sub_labels[sub_idx], method, "- Predicted distribution"), x = NULL, y = NULL) +
     theme_void(12) + theme(
       plot.title = element_text(hjust = 0.5, face = "bold"),
       legend.key.width  = unit(0.2, "cm"),
@@ -229,6 +232,7 @@ for (method in names(raster_preds)) {
       legend.ticks.length = unit(0.2, "cm"),
       legend.title = element_text(angle = 90, hjust = 0.5, vjust = 0.5, size = 10)
     )
+  sub_idx <- sub_idx + 1
   # ggsave(sprintf("mourning_warbler_map_%s_prob.pdf", tolower(gsub(" ", "_", method))),
          # p_prob, width = 6.5, height = 3.8, dpi = 300)
   
@@ -250,7 +254,7 @@ for (method in names(raster_preds)) {
       )
     ) +
     coord_quickmap(xlim = c(-170, -50), ylim = c(15, 75), expand = FALSE) +
-    labs(title = paste(method, "- Prediction uncertainty"), x = NULL, y = NULL) +
+    labs(title = paste(sub_labels[sub_idx], method, "- Prediction uncertainty"), x = NULL, y = NULL) +
     theme_void(12) + theme(
       plot.title = element_text(hjust = 0.5, face = "bold"),
       legend.key.width  = unit(0.2, "cm"),
@@ -258,6 +262,7 @@ for (method in names(raster_preds)) {
       legend.ticks.length = unit(0.2, "cm"),
       legend.title = element_text(angle = 90, hjust = 0.5, vjust = 0.5, size = 10)
     )
+  sub_idx <- sub_idx + 1
   # ggsave(sprintf("mourning_warbler_map_%s_var.pdf", tolower(gsub(" ", "_", method))),
   #        p_var, width = 6.5, height = 3.8, dpi = 300)
   
