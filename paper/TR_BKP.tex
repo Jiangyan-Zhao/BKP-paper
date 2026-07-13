@@ -1155,7 +1155,7 @@ Figures~\ref{fig:ex6-class1}--\ref{fig:ex6-class3} display the ground truth surf
 
 \paragraph{Example 7} 
 Consider another three-class classification task based on the well-known \emph{Iris} dataset available in \proglang{R}. This classic benchmark dataset contains measurements of three iris species---\emph{setosa}, \emph{versicolor}, and \emph{virginica}---each described by four features: sepal length, sepal width, petal length, and petal width. Due to the overlap in feature space, particularly between \emph{versicolor} and \emph{virginica}, the class boundaries are not linearly separable, making this dataset a standard testbed for evaluating multi-class classification algorithms. 
-For visualization purposes, we restrict our analysis to the first two features: sepal length and sepal width. We fit the DKP model using a fixed prior specification with \code{r0 = 0.1} and \code{p0 = rep(1/3, 3)}, assuming equal prior probability for each class.
+For visualization purposes, we restrict our analysis to the first two features: sepal length and sepal width. We fit the DKP model using a fixed prior specification with \code{r0 = 0.01} and \code{p0 = rep(1/3, 3)}, assuming equal prior probability for each class.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1186,20 +1186,17 @@ R> dkp_pred_probs <- predict(DKP_model_Class, X_test)$mean
 		\includegraphics[width=\linewidth]{ex7LGP.pdf} 
 		\caption{LGP }
 	\end{subfigure}  
-  	\caption{Classification and uncertainty visualization after applying the DKP model on the \emph{Iris} dataset. The left panel shows the predicted classification regions based on the MAP decision rule, where each color corresponds to one of the three iris species. The training data points are overlaid using shape-coded markers. The right panel visualizes the model's predictive uncertainty using the maximum predicted class probability. Lower values (light-colored regions) indicate higher classification uncertainty, which usually occurs near the class boundaries.}
+	\caption{Classification and confidence visualization for the DKP and multiclass LGP fits on the \emph{Iris} dataset. The left panels show the predicted classification regions, with the training observations overlaid using class-specific symbols. The right panels show the maximum predicted class probability as a model-specific summary of classification confidence. Lower values indicate less decisive class-probability assignments, which typically occur near class boundaries.}
 	\label{fig:ex7}
 \end{figure}
 
-Figure~\ref{fig:ex7} provides a visual summary of the fitted DKP model. 
-The upper left panel displays the MAP classification boundaries, which clearly separate \emph{setosa} from the other two species. In contrast, the boundary between \emph{versicolor} and \emph{virginica} is more intricate, reflecting the known overlap between these two species in sepal measurements.
+Figure~\ref{fig:ex7} provides a visual comparison of the fitted DKP and multiclass LGP models. 
+The upper-left panel shows that the DKP model clearly separates \emph{setosa} from the other two species, while producing a smooth transition between the overlapping \emph{versicolor} and \emph{virginica} regions. 
+The upper-right panel displays the corresponding maximum posterior class probability $\max_j \pi_j(\vec{x})$. Values near 1 indicate decisive class assignments, whereas values closer to $1/3$ indicate greater ambiguity among the three classes. The lower-confidence regions are concentrated primarily near the fitted class boundaries, yielding a coherent representation of classification confidence.
 
-To further illustrate the model's prediction uncertainty, the upper right panel shows a contour map of the maximum predicted probability $\max_j \pi_j(\vec{x})$ across the input space. 
-This diagnostic highlights regions where the classifier is most confident (values near 1) versus uncertain (values close to 1/3), which effectively identifies decision boundaries and ambiguous areas. 
-Such visualization aids in understanding the reliability of classification decisions and the structure of the learned decision surfaces.
-
-Again, we compare DKP with a multiclass Gaussian-process classifier implemented using the \pkg{kernlab} package \citep{Karatzoglou2004kernlab}. 
+For comparison, we fit a multiclass Gaussian-process classifier using the \pkg{kernlab} package \citep{Karatzoglou2004kernlab}. 
 The \fct{gausspr} implementation fits pairwise binary Gaussian-process classifiers and combines their probability estimates through pairwise coupling. 
-For evaluation, we report one-vs-rest ROC curves and the corresponding macro-average AUC.
+For evaluation, we compute one-vs-rest ROC curves for the three classes and report the corresponding macro-average AUC.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1231,15 +1228,11 @@ R> lgp_pred_probs <- predict(gausspr_model, newdata = iris_test,
 	\label{fig:ex7-roc}
 \end{figure}
 
-It is seen that the decision boundaries in the ``Predicted Classes'' plot (lower left panel) appear less smooth, particularly in the regions between the two clusters of `triangle' and `plus' data points. 
-Additionally, the ``Maximum Predicted Probability'' plot (lower right panel) shows a more fragmented and less uniform confidence landscape. 
-There are pockets of high confidence, but also areas of lower confidence (yellows and greens) scattered over the region, even within what appear to be the core regions of the classes. 
-This indicates that DKP model is more accurate in prediction and more consistent in uncertainty quantification than the LGP model. 
-The corresponding multiclass ROC curves with macro-average AUC (0.944 vs 0.927) are presented in Figure~\ref{fig:ex7-roc}.  
-
-
-The DKP and multiclass LGP fits produce broadly similar class partitions, with their main differences occurring near the overlapping \emph{versicolor} and \emph{virginica} regions. The maximum predicted probability surfaces provide model-specific summaries of classification confidence and should not be interpreted as a direct comparison of uncertainty calibration. On this train--test split, DKP achieves a macro-average AUC of 0.944, compared with 0.927 for LGP, indicating slightly better discrimination for DKP in this example, as shown in Figure~\ref{fig:ex7-roc}.
-
+Compared with the DKP fit, the LGP model produces less smooth and more fragmented decision regions, particularly between the clusters corresponding to \emph{versicolor} and \emph{virginica}, as shown in the lower-left panel of Figure~\ref{fig:ex7}. 
+Its maximum predicted probability surface in the lower-right panel is also less spatially coherent, with isolated pockets of relatively high or low confidence appearing within otherwise homogeneous class regions. 
+In contrast, the DKP confidence surface varies more systematically with the fitted decision boundaries and provides a more stable model-based representation of classification confidence. 
+The corresponding ROC curves in Figure~\ref{fig:ex7-roc} yield a macro-average AUC of 0.944 for DKP and 0.927 for LGP. 
+Taken together, the smoother decision structure, more coherent confidence surface, and higher macro-average AUC indicate that DKP provides better predictive discrimination and a more stable representation of classification confidence than LGP in this example. 
 
 \subsection{TwinBKP and TwinDKP Models}\label{sec:example_twin}
 
