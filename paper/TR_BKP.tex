@@ -1197,7 +1197,9 @@ To further illustrate the model's prediction uncertainty, the upper right panel 
 This diagnostic highlights regions where the classifier is most confident (values near 1) versus uncertain (values close to 1/3), which effectively identifies decision boundaries and ambiguous areas. 
 Such visualization aids in understanding the reliability of classification decisions and the structure of the learned decision surfaces.
 
-Again, we compare the performance with LGP model, which is implemented by R package \pkg{kernlab} \citep{Karatzoglou2004kernlab}. We adopt the one-vs-rest (OvR) approach for comparison, which works by training a separate binary classifier for each class. Each classifier is tasked with distinguishing its assigned class from all other classes combined.
+Again, we compare DKP with a multiclass Gaussian-process classifier implemented using the \pkg{kernlab} package \citep{Karatzoglou2004kernlab}. 
+The \fct{gausspr} implementation fits pairwise binary Gaussian-process classifiers and combines their probability estimates through pairwise coupling. 
+For evaluation, we report one-vs-rest ROC curves and the corresponding macro-average AUC.
 
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -1234,6 +1236,9 @@ Additionally, the ``Maximum Predicted Probability'' plot (lower right panel) sho
 There are pockets of high confidence, but also areas of lower confidence (yellows and greens) scattered over the region, even within what appear to be the core regions of the classes. 
 This indicates that DKP model is more accurate in prediction and more consistent in uncertainty quantification than the LGP model. 
 The corresponding multiclass ROC curves with macro-average AUC (0.944 vs 0.927) are presented in Figure~\ref{fig:ex7-roc}.  
+
+
+The DKP and multiclass LGP fits produce broadly similar class partitions, with their main differences occurring near the overlapping \emph{versicolor} and \emph{virginica} regions. The maximum predicted probability surfaces provide model-specific summaries of classification confidence and should not be interpreted as a direct comparison of uncertainty calibration. On this train--test split, DKP achieves a macro-average AUC of 0.944, compared with 0.927 for LGP, indicating slightly better discrimination for DKP in this example, as shown in Figure~\ref{fig:ex7-roc}.
 
 
 \subsection{TwinBKP and TwinDKP Models}\label{sec:example_twin}
@@ -1646,7 +1651,7 @@ All analyses were conducted using \proglang{R} version 4.6.1 and \pkg{BKP} versi
 %% - With proper section titles and _not_ just "Appendix".
 \newpage
 \appendix
-\section{Evaluation of Pointwise Uncertainty and Coverage} \label{app:coverage}
+\section{Pointwise Interval-Coverage Simulation} \label{app:coverage}
 
 We evaluate the empirical pointwise coverage of the uncertainty intervals produced by \pkg{BKP} using the one-dimensional oscillatory probability function from Example~2 in Equation~\ref{eq:bkp-1d-generate-function-2}. The comparison includes standard BKP with \code{ess = "none"}, Shepard effective-sample-size calibrated BKP with \code{ess = "shepard"}, hereafter denoted BKP-ESS, and a logistic Gaussian process (LGP).
 
