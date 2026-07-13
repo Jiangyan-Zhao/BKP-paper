@@ -11,7 +11,7 @@
   "Packages": {
     "BKP": {
       "Package": "BKP",
-      "Version": "0.3.0",
+      "Version": "0.3.1",
       "Source": "Repository",
       "Title": "Beta Kernel Process Modeling",
       "Authors@R": "c( person(given = \"Jiangyan\", family = \"Zhao\", email = \"zhaojy2017@126.com\", role = c(\"cre\", \"aut\")), person(given = \"Kunhai\", family = \"Qing\", email = \"kunhaiq@qq.com\", role = \"aut\"), person(given = \"Jin\", family = \"Xu\", email = \"jxu@stat.ecnu.edu.cn\", role = \"aut\") )",
@@ -19,7 +19,7 @@
       "Description": "Implements the Beta Kernel Process (BKP) for nonparametric modeling of covariate-dependent binomial probabilities, and the Dirichlet Kernel Process (DKP) for categorical or multinomial response data. Scalable global-local approximations are provided through TwinBKP and TwinDKP, using twinning-selected global subsets and local nearest-neighbour updates. Functions are included for model fitting, predictive inference with uncertainty quantification, posterior simulation, and visualization in one- and two-dimensional input spaces. Gaussian, Matern 5/2, Matern 3/2, and Wendland kernels are supported, with hyperparameters selected by multi-start derivative-free optimization. For more details, see Zhao, Qing, and Xu (2025) <doi:10.48550/arXiv.2508.10447>.",
       "License": "GPL (>= 3)",
       "Copyright": "See inst/COPYRIGHTS",
-      "URL": "https://github.com/Jiangyan-Zhao/BKP",
+      "URL": "https://github.com/Jiangyan-Zhao/BKP, https://github.com/Jiangyan-Zhao/BKP-paper",
       "BugReports": "https://github.com/Jiangyan-Zhao/BKP/issues",
       "Encoding": "UTF-8",
       "NeedsCompilation": "yes",
