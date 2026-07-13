@@ -188,8 +188,8 @@ df <- data.frame(
 ## plots for the LGP predictive mean and variance. The function is non-exported
 ## but documented in the package; it is used here only to match the manuscript
 ## figure style.
-p1 <- BKP:::my_2D_plot_fun("Mean", "Predictive Mean", df, X = X_train, y = y_train)
-p2 <- BKP:::my_2D_plot_fun("Variance", "Predictive Variance", df, X = X_train, y = y_train)
+p1 <- BKP:::my_2D_plot_fun("Mean", "Posterior Mean", df, X = X_train, y = y_train)
+p2 <- BKP:::my_2D_plot_fun("Variance", "Posterior Variance", df, X = X_train, y = y_train)
 
 ## Arrange the LGP predictive mean and variance plots side by side.
 pdf("code/figure/ex4LGP.pdf", width = 13, height = 6)

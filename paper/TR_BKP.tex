@@ -121,6 +121,7 @@ Section~\ref{sec:package} describes the package interface, including fitting, pr
 Section~\ref{sec:example} provides illustrative examples for binomial and multinomial responses, together with GP-based comparisons and timing experiments. 
 Section~\ref{sec:real_data} demonstrates the workflow in two real-data applications. 
 Section~\ref{sec:summary} concludes with limitations and future directions.
+Appendix~\ref{app:coverage} reports a simulation-based assessment of empirical pointwise interval coverage.
 
 \section{Statistical Foundation} \label{sec:model}
  
@@ -249,6 +250,7 @@ For $m_K(\vec{x})>0$, the adjusted data contribution satisfies
 	c(\vec{x})\vec{k}(\vec{x})^\top\vec{m}=m_{\mathrm{tar}}(\vec{x}).
 \]
 Thus, the calibration changes only the total pseudo-count contributed by the data, while preserving the kernel-weighted empirical success proportion.
+The empirical pointwise coverage of the resulting intervals is examined in Appendix~\ref{app:coverage}.
 
 \subsection{Prior Specification}\label{sec:prior}
 
@@ -983,6 +985,21 @@ This illustrates the trade-off between increased optimization robustness and add
 \paragraph{Example 4}  
 We next consider a binary classification task using the \emph{Two Spirals} dataset \citep{Chalup2007spirals}, a well-known benchmark consisting of two intertwined spirals in a bounded two-dimensional input space. This dataset is particularly challenging due to the complex, non-linearly separable class structure.
 
+\begin{figure}[!t]
+	\centering 
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=\linewidth]{ex4.pdf}  
+		\caption{BKP}
+	\end{subfigure} 
+	\medspace
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=\linewidth]{ex4LGP.pdf}  
+		\caption{LGP}
+	\end{subfigure}    
+	\caption{Probability surfaces for the Two Spirals example fitted by the BKP and LGP models. The left panels show the posterior mean class probabilities, and the right panels show the corresponding model-specific posterior variance summaries. Color shading represents the estimated class probability, while circles and crosses indicate training observations from the two classes.}
+	\label{fig:BKP_spiral}
+\end{figure}
+
 We generate $n = 120$ observations using the \fct{mlbench.spirals} function from the \proglang{R} package \pkg{mlbench} \citep{Leisch2024mlbench}, with two complete rotations and additive Gaussian noise of standard deviation \code{sd = 0.05}. The inputs $\vec{x}$ are constrained to the domain $[-1.7, 1.7]^2$, and the binary class labels are encoded as 0 and 1. We fit the BKP model using a fixed prior specification with \code{r_0 = 0.1} and \code{p_0 = 0.5}.
 
 \begin{CodeChunk}
@@ -1003,22 +1020,7 @@ R> prediction <- predict(BKP_model_Class, X_test)
 \end{CodeInput}
 \end{CodeChunk} 
 
-\begin{figure}[!t]
-	\centering 
-	\begin{subfigure}{\textwidth}
-		\includegraphics[width=\linewidth]{ex4.pdf}  
-		\caption{BKP}
-	\end{subfigure} 
-	\medspace
-	\begin{subfigure}{\textwidth}
-		\includegraphics[width=\linewidth]{ex4LGP.pdf}  
-		\caption{LGP}
-	\end{subfigure}    
-  	\caption{Predictions of the two spirals by BKP and LGP models in terms of posterior predictive mean (left panel) and predictive variance (right panel) of class probabilities, where color shading represents the estimated success probability, circles and crosses indicate training observations from the two classes}
-	\label{fig:BKP_spiral}
-\end{figure}
-
-Figure~\ref{fig:BKP_spiral} presents the predictive mean and variance surfaces of the class probabilities. The upper left panel shows that the BKP model accurately captures the intricate spiral structure, with smoothly varying predicted probabilities that delineate the nonlinear decision boundary. The upper right panel displays the associated predictive uncertainty, which is highest near the boundary regions between the spirals. Circles and crosses indicate training observations from the two respective classes. These results illustrate the capacity of BKP to flexibly model complex classification boundaries while providing coherent uncertainty quantification. 
+Figure~\ref{fig:BKP_spiral} presents the posterior mean and variance surfaces of the class probabilities. The upper-left panel shows that the BKP model captures the intricate spiral structure, with smoothly varying posterior mean probabilities that delineate the nonlinear decision boundary. The upper-right panel displays the corresponding posterior variance, which is generally larger near the boundary regions between the spirals. Circles and crosses indicate training observations from the two respective classes. These results illustrate the ability of BKP to model complex classification boundaries while providing model-based posterior uncertainty summaries.
 
 We compare the prediction performance with the LGP model implemented by R package \pkg{gplite}. 
 \begin{CodeChunk}
@@ -1043,7 +1045,10 @@ R> prediction_gp <- gp_pred(gp, as.matrix(X_test), transform = TRUE)
 	\label{fig:ex4-roc}
 \end{figure}
 
-The lower panel of Figure~\ref{fig:BKP_spiral} indicates that the LGP model encounters difficulty in capturing the intricate geometry of the Two Spirals dataset. Although it roughly follows the spiral structure, its predictive mean exhibits a more irregular and less sharply defined decision boundary compared to the BKP model. This pattern suggests that the LGP model may be more prone to overfitting or less capable of generalizing effectively. The corresponding predictive variance plots reinforce this interpretation when viewed separately in regions with and without training data. In regions where data are available, the LGP model exhibits elevated variance (brighter regions) across a broader portion of the input space indicating greater uncertainty in areas critical for classification. In contrast, the BKP model maintains lower variance concentrated more closely around the decision boundary, reflecting higher confident predictions. Interestingly, in regions without training data, the LGP model’s uncertainty is not necessarily the highest; instead, it sometimes shows comparatively lower variance than the BKP model. This suggests that the LGP model may over-smooth or fail to express appropriate uncertainty far from observed data, whereas BKP better captures uncertainty behavior in unobserved regions. The receiver operating characteristic (ROC) curves and the corresponding area under the curve (AUC) values in Figure~\ref{fig:ex4-roc} further corroborate this conclusion: BKP achieves an AUC of 0.928, compared to 0.897 for LGP, reflecting superior discriminatory performance and a better balance between sensitivity and specificity. 
+The lower panels of Figure~\ref{fig:BKP_spiral} show that the LGP fit produces a different probability surface and a more spatially diffuse variance pattern than BKP. 
+Because the two methods use different posterior constructions, their variance surfaces should be interpreted as model-specific uncertainty summaries rather than as direct evidence of comparative calibration. 
+The receiver operating characteristic (ROC) curves in Figure~\ref{fig:ex4-roc} provide a predictive comparison on the held-out observations: BKP achieves an AUC of 0.928, compared with 0.897 for LGP, indicating better discrimination for BKP on this particular train--test split.
+
 
 \subsection{DKP Model}\label{sec:example_dkp}
 
@@ -1210,8 +1215,6 @@ R> lgp_pred_probs <- predict(gausspr_model, newdata = iris_test,
 \end{CodeInput}
 \end{CodeChunk} 
 
-It is seen that the decision boundaries in the ``Predicted Classes'' plot (lower left panel) appear less smooth, particularly in the regions between the two clusters of `triangle' and `plus' data points. Additionally, the ``Maximum Predicted Probability'' plot (lower right panel) shows a more fragmented and less uniform confidence landscape. There are pockets of high confidence, but also areas of lower confidence (yellows and greens) scattered over the region, even within what appear to be the core regions of the classes. This indicates that DKP model is more accurate in prediction and more consistent in uncertainty quantification than the LGP model. The corresponding multiclass ROC curves with macro-average AUC (0.944 vs 0.927) are presented in Figure~\ref{fig:ex7-roc}.  
-
 \begin{figure}[!t]
 	\centering 
 	\begin{subfigure}{0.48\textwidth}
@@ -1225,6 +1228,13 @@ It is seen that the decision boundaries in the ``Predicted Classes'' plot (lower
 	\caption{One-vs-Rest ROC curves and their respective macro-average AUCs for DKP and LGP models}
 	\label{fig:ex7-roc}
 \end{figure}
+
+It is seen that the decision boundaries in the ``Predicted Classes'' plot (lower left panel) appear less smooth, particularly in the regions between the two clusters of `triangle' and `plus' data points. 
+Additionally, the ``Maximum Predicted Probability'' plot (lower right panel) shows a more fragmented and less uniform confidence landscape. 
+There are pockets of high confidence, but also areas of lower confidence (yellows and greens) scattered over the region, even within what appear to be the core regions of the classes. 
+This indicates that DKP model is more accurate in prediction and more consistent in uncertainty quantification than the LGP model. 
+The corresponding multiclass ROC curves with macro-average AUC (0.944 vs 0.927) are presented in Figure~\ref{fig:ex7-roc}.  
+
 
 \subsection{TwinBKP and TwinDKP Models}\label{sec:example_twin}
 
@@ -1425,7 +1435,7 @@ For BKP, larger posterior variances are concentrated mainly around transitions b
 The LGP variance is more broadly distributed over the study region, with local reductions around some observed locations.
 Because BKP and LGP construct probability-scale uncertainty differently,
 these variance maps should be interpreted as model-specific uncertainty summaries rather than as directly comparable frequentist coverage measures.
-The empirical coverage behavior of the fitted interval procedures is examined separately in Appendix~\ref{app:coverage}.
+A separate simulation study of empirical pointwise interval coverage is reported in Appendix~\ref{app:coverage}.
 
 \subsubsection{Predictive Performance on the Test Data} 
 
@@ -1544,7 +1554,7 @@ R> gp_pred <- gp_pred(gp, X_test, transform = TRUE)
 	\label{tab:model_comparison}
 \end{table}
 
-Predictive performance on the spatially withheld testing set is summarized using the area under the AUC and the Brier score.
+Predictive performance on the spatially withheld testing set is summarized using the area under the receiver operating characteristic curve (AUC) and the Brier score.
 Table~\ref{tab:model_comparison} reports the predictive performance and elapsed computation times for the three fitted models.
 
 On this predefined spatial test set, TwinBKP achieves the highest AUC of 0.912 and the lowest Brier score of 0.0669.
@@ -1594,7 +1604,7 @@ To our knowledge, \pkg{BKP} is the first publicly available software dedicated t
 The framework is intended to complement, rather than replace, latent Gaussian-process classifiers and other nonparametric probabilistic models.
 Its main advantages are that inference is performed directly on the probability scale, posterior summaries are available in closed form under the fitted local conjugate update, and the resulting workflow is transparent and easy to implement for binomial and multinomial response data.
 At the same time, BKP should be interpreted as a Bayesian-inspired local-likelihood smoothing framework, not as a fully specified Bayesian stochastic-process model in the Gaussian-process sense.
-Consequently, its credible intervals are pointwise posterior-style summaries under the fitted kernel-weighted update, and formal frequentist coverage guarantees remain an important topic for future investigation.
+Consequently, its credible intervals are pointwise posterior-style summaries under the fitted kernel-weighted update and do not carry automatic frequentist coverage guarantees. Appendix~\ref{app:coverage} provides a simulation-based assessment of their empirical coverage and illustrates the effect of Shepard ESS calibration. Developing conformalized BKP procedures with finite-sample marginal coverage guarantees for future responses, together with calibrated pointwise intervals or simultaneous confidence bands for the latent probability surface, remains an important direction for future research.
 In addition, the full BKP and DKP implementations remain quadratic full-kernel methods in memory, whereas TwinBKP and TwinDKP provide scalable global-local approximations for larger datasets.
 
 Future development directions include extending the BKP framework to support more complex data structures, such as multivariate responses, functional data, time series, and combinations of qualitative and quantitative covariates.
@@ -1636,62 +1646,71 @@ All analyses were conducted using \proglang{R} version 4.6.1 and \pkg{BKP} versi
 %% - With proper section titles and _not_ just "Appendix".
 \newpage
 \appendix
-\section{Evaluation of Predictive Uncertainty and Coverage} \label{app:coverage}
+\section{Evaluation of Pointwise Uncertainty and Coverage} \label{app:coverage}
 
-To evaluate the predictive uncertainty quantification of the \pkg{BKP} package, we conduct a simulation study based on the highly nonlinear 1D oscillating probability function from Example~2 (Equation~\ref{eq:bkp-1d-generate-function-2}). We compare the standard BKP model (\code{ess = "none"}), the BKP model with Shepard effective-sample-size calibration (\code{ess = "shepard"}), and the Logistic Gaussian Process (LGP) model.
+We evaluate the empirical pointwise coverage of the uncertainty intervals produced by \pkg{BKP} using the one-dimensional oscillatory probability function from Example~2 in Equation~\ref{eq:bkp-1d-generate-function-2}. The comparison includes standard BKP with \code{ess = "none"}, Shepard effective-sample-size calibrated BKP with \code{ess = "shepard"}, hereafter denoted BKP-ESS, and a logistic Gaussian process (LGP).
 
-To systematically assess the quality of the $(1-\alpha)$ posterior credible intervals $[L(\vec{x}), U(\vec{x})]$ against the true probability surface $\pi(\vec{x})$, we focus on the Prediction Interval Coverage Probability (PICP). For a nominal $95\%$ confidence level, we set $\alpha = 0.05$. In each single simulation run, the empirical coverage rate is computed as the average over $N$ specific evaluation points:
+For an evaluation set $\mathcal{E}=\{x_1,\ldots,x_N\}$, the empirical pointwise coverage rate in one simulation replication is defined as
 \[
-    \mathrm{PICP} = \frac{1}{N} \sum_{i=1}^{N} \mathds{1}\left\{ L(\vec{x}_i) \leq \pi(\vec{x}_i) \leq U(\vec{x}_i) \right\}.
+\widehat{C}(\mathcal{E})=
+\frac{1}{N}\sum_{i=1}^{N}
+\mathds{1}\left\{L(x_i)\leq\pi(x_i)\leq U(x_i)\right\},
 \]
+where $L(x_i)$ and $U(x_i)$ are the lower and upper bounds of a nominal $95\%$ pointwise interval for the latent probability $\pi(x_i)$.
 
-We consider two sample size settings: $n = 30$ and $n = 100$. For each setting, the experiment is independently repeated 2,000 times. Within each of the 2,000 replications, the PICP is evaluated in two distinct ways: (1) on the original $n$ training locations (where $N = 30$ or $100$), and (2) on a dense uniform grid of $N = 2000$ evaluation points evenly spaced across the input space. The final reported coverage metrics are the mean and standard deviation (SD) of these PICP values aggregated across the 2,000 independent replications. A reliable model should yield a mean coverage rate close to or slightly above the nominal 95\% level.
+We consider training sample sizes $n=30$ and $n=100$, with 100 independently generated datasets for each setting. In each replication, the training inputs are generated by Latin hypercube sampling over $[-2,2]$, the binomial trial sizes are sampled from $\{1,\ldots,100\}$, and the responses are generated from the true probability function in Equation~\ref{eq:bkp-1d-generate-function-2}. All three models, including their hyperparameter optimization procedures, are refitted independently in every replication. The BKP and BKP-ESS intervals are obtained from the quantiles of the fitted beta distributions, whereas the LGP intervals are obtained from the transformed posterior quantiles returned by \pkg{gplite}.
 
-Figure~\ref{fig:ex2_combined} visualizes the estimated probability surfaces and the corresponding 95\% credible intervals based on a \emph{single} simulation run, evaluated over the 2,000 grid points. Table~\ref{tab:coverage_results} summarizes the mean coverage rates and their standard deviations across all 2,000 replications.
+Coverage is evaluated on two sets of input locations. The evaluation grid consists of the same 2,000 equally spaced points over $[-2,2]$ in every replication and is used to assess coverage throughout the input domain. The training-location coverage is evaluated at the $n$ randomly generated training inputs from the corresponding replication. The evaluation grid contains no additional observed responses and should therefore not be interpreted as a conventional held-out testing dataset.
+
+The nominal $95\%$ interval level is not an automatic finite-sample frequentist coverage guarantee for either BKP or LGP. Both methods produce model-based posterior intervals whose empirical coverage may depend on the kernel specification, likelihood, prior, and hyperparameter estimation. Conventional Gaussian-process intervals may similarly exhibit substantial under-coverage under model misspecification \citep{Papadopoulos2024GPRCP}.
 
 \begin{figure}[!t]
-    \centering 
-    \includegraphics[width=0.8\linewidth]{ex2_combined.pdf}  
-    \caption{Visualization of predictive means and 95\% credible intervals based on a single simulation run over the 2,000 grid points for Example~2. The rows represent standard BKP, ESS-calibrated BKP-ESS, and LGP, respectively. The left column shows the results for $n=30$ and the right column for $n=100$.}
-    \label{fig:ex2_combined}
+	\centering
+	\includegraphics[width=0.8\linewidth]{ex2_combined.pdf}
+	\caption{Representative fitted probability surfaces and pointwise $95\%$ intervals for Example~2. The rows correspond to BKP, BKP-ESS, and LGP, respectively, while the columns correspond to training sample sizes $n=30$ and $n=100$. Each panel is based on one simulation replication and is evaluated on the fixed evaluation grid of 2,000 points.}
+	\label{fig:ex2_combined}
 \end{figure}
 
 \begin{table}[!t]
-  \centering
-  \caption{Summary of empirical coverage rates (Nominal 95\%). The mean and standard deviation (SD) are calculated across 2000 independent replications. Results are presented for both the dense grid (2000 points) and the original training points across different sample sizes ($n=30, 100$).}
-  \label{tab:coverage_results}
-  \begin{tabular}{lllc}
-    \toprule
-    \textbf{Evaluation} & \textbf{Config} & \textbf{Model} & \textbf{Coverage (\%)} \\
-    \midrule
-    \multirow{6}{*}{\textbf{Grid}} 
-    & \multirow{3}{*}{$n=30$} 
-      & BKP    & 86.5 (SD=6.8) \\
-    & & BKP-ESS & 93.7 (SD=3.2) \\
-    & & LGP           & 91.3 (SD=4.4) \\
-    \cmidrule{2-4}
-    & \multirow{3}{*}{$n=100$} 
-      & BKP    & 90.7 (SD=5.0) \\
-    & & BKP-ESS & 97.7 (SD=0.9) \\
-    & & LGP           & 89.3 (SD=4.3) \\
-    \midrule
-    \multirow{6}{*}{\textbf{Training}} 
-    & \multirow{3}{*}{$n=30$} 
-      & BKP    & 87.2 (SD=7.1) \\
-    & & BKP-ESS & 94.3 (SD=3.6) \\
-    & & LGP           & 91.0 (SD=5.0) \\
-    \cmidrule{2-4}
-    & \multirow{3}{*}{$n=100$} 
-      & BKP    & 90.7 (SD=5.0) \\
-    & & BKP-ESS & 97.7 (SD=1.1) \\
-    & & LGP           & 89.3 (SD=4.4) \\
-    \bottomrule
-  \end{tabular}
+	\centering
+	\begin{tabular}{lllc}
+		\toprule
+		Evaluation set & Sample size & Model & Coverage (\%) \\
+		\midrule
+		\multirow{6}{*}{Evaluation grid}
+		& \multirow{3}{*}{$n=30$}
+		& BKP     & 87.1 (6.4) \\
+		& & BKP-ESS & 94.1 (3.1) \\
+		& & LGP     & 91.4 (4.0) \\
+		\cmidrule{2-4}
+		& \multirow{3}{*}{$n=100$}
+		& BKP     & 90.9 (4.1) \\
+		& & BKP-ESS & 97.6 (1.0) \\
+		& & LGP     & 89.5 (3.6) \\
+		\midrule
+		\multirow{6}{*}{Training locations}
+		& \multirow{3}{*}{$n=30$}
+		& BKP     & 88.1 (6.7) \\
+		& & BKP-ESS & 94.6 (3.3) \\
+		& & LGP     & 91.1 (5.0) \\
+		\cmidrule{2-4}
+		& \multirow{3}{*}{$n=100$}
+		& BKP     & 90.8 (4.1) \\
+		& & BKP-ESS & 97.6 (1.0) \\
+		& & LGP     & 89.8 (3.7) \\
+		\bottomrule
+	\end{tabular}
+	\caption{Empirical coverage of nominal $95\%$ pointwise intervals. Entries are mean coverage percentages across 100 independent replications, with standard deviations of the replication-specific coverage rates in parentheses. The evaluation-grid results use the same 2,000 equally spaced points over $[-2,2]$ in every replication, whereas the training-location results use the randomly generated training inputs from each replication.}
+	\label{tab:coverage_results}
 \end{table}
 
-The results demonstrate that the standard BKP model (\code{none}) suffers from under-coverage, with mean coverage rates ranging between $86.5\%$ and $90.7\%$, falling consistently short of the 95\% target. The LGP model exhibits similar under-coverage behavior, centering around $89\%-91\%$.
+Figure~\ref{fig:ex2_combined} shows representative fitted probability surfaces and pointwise $95\%$ intervals from one simulation replication. Table~\ref{tab:coverage_results} summarizes the mean and standard deviation of the replication-specific coverage rates across the 100 replications.
 
-In contrast, enabling the Shepard effective-sample-size calibration (\code{BKP-ESS}) substantially improves the coverage probability, bringing it remarkably close to or slightly above the nominal $95\%$ level (up to $97.7\%$ when $n=100$). This calibration effectively rescales the pseudo-count contributions to account for variations in local data density, thereby correcting the severe under-coverage issue. These findings demonstrate that when reliable coverage is the primary inferential goal, the ESS calibration method provides a far more robust and statistically valid uncertainty quantification.
+The standard BKP and LGP intervals exhibit under-coverage in all four settings. BKP-ESS produces coverage close to the nominal level for $n=30$, with mean coverage of $94.1\%$ on the evaluation grid and $94.6\%$ at the training locations. For $n=100$, its mean coverage increases to $97.6\%$ for both evaluation sets, indicating moderately conservative intervals. The standard deviations are also smaller for BKP-ESS, particularly when $n=100$.
+
+These results show that Shepard ESS calibration substantially changes the concentration of the BKP intervals and reduces under-coverage under the present simulation design. They do not establish a general frequentist coverage guarantee, because coverage may depend on the data-generating mechanism and model specification.
+
+A natural direction for future research is to develop conformalized BKP procedures that provide finite-sample marginal coverage guarantees for future Bernoulli, binomial, or multinomial responses under exchangeability. BKP posterior summaries or beta-binomial and Dirichlet-multinomial predictive distributions could be used to construct suitable nonconformity scores. Coverage guarantees for the latent probability surface $\pi(x)$ are distinct from response-level conformal coverage and require separate development of calibrated pointwise intervals or simultaneous confidence bands.
 %% -----------------------------------------------------------------------------
 
 
