@@ -635,6 +635,26 @@ for (nm in names(all_rocs)) {
 }
 
 
+## Save elapsed times to CSV.
+dir.create(
+  "code/result",
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+
+times_df <- data.frame(
+  method = names(times),
+  elapsed_seconds = unname(times),
+  stringsAsFactors = FALSE
+)
+
+write.csv(
+  times_df,
+  "code/result/mourning_warbler_times.csv",
+  row.names = FALSE
+)
+
+
 ## -------------------------------------------------------------------------
 ## ROC comparison figure
 ## -------------------------------------------------------------------------
