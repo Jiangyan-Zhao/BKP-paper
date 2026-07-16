@@ -563,7 +563,7 @@ The transformation enforces positive length-scale parameters
 \begin{column}{0.53\textwidth}
 
 \begin{block}{Optimization workflow}
-
+\small
 \begin{enumerate}
 
   \item Generate \(n_0=10d_\gamma\) initial values using a Latin hypercube design
@@ -574,8 +574,8 @@ The transformation enforces positive length-scale parameters
 
   \end{enumerate}
 \[
-  s^\star= \underset{1\leq s\leq n_0}{\argmin}\; L\!\left(\widehat{\vgamma}^{(s)};\calD\right),
-\qquad \widehat{\vgamma} = \widehat{\vgamma}^{(s^\star)}.
+  s^\star= \underset{1\leq s\leq n_0}{\argmin}\; L\!\left(\widehat{\vgamma}^{(s)};\calD_n\right),
+\quad \widehat{\vgamma} = \widehat{\vgamma}^{(s^\star)}.
 \]
 
 \end{block}
@@ -592,9 +592,26 @@ The LOOCV objective may be non-convex, so multiple initial values reduce sensiti
 \end{alertblock}
 
 
+# Package Usage
 
+### \fct{fit\_BKP} --- Data Inputs
 
+```{r fit-BKP, eval=FALSE}
+fit_BKP(X, y, m, Xbounds = NULL,
+  prior = "noninformative", r0 = 2, p0 = mean(y / m),
+  kernel = "gaussian", isotropic = TRUE, theta = NULL,
+  loss = "brier", ess = "none", n_multi_start = NULL, n_threads = 1)
+```
 
+- The first group specifies the core **data inputs**:
+
+  - `X`: an \(n\times d\) numeric input matrix or data frame
+  
+  - `y`: a length-\(n\) vector of observed success counts
+  
+  - `m`: a length-\(n\) vector of corresponding binomial trial counts
+  
+  - `Xbounds`: an optional \(d\times2\) matrix of lower and upper bounds, used to normalize `X` to \([0,1]^d\) before fitting. If `NULL`, `X` is assumed to be already normalized.
 
 
 
