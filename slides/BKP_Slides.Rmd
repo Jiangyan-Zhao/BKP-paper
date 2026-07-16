@@ -614,7 +614,81 @@ fit_BKP(X, y, m, Xbounds = NULL,
   - `Xbounds`: an optional \(d\times2\) matrix of lower and upper bounds, used to normalize `X` to \([0,1]^d\) before fitting. If `NULL`, `X` is assumed to be already normalized.
 
 
+### \fct{fit\_BKP} --- Prior Specification
 
+```{r fit-BKP-prior, eval=FALSE}
+fit_BKP(X, y, m, Xbounds = NULL,
+  prior = "noninformative", r0 = 2, p0 = mean(y / m),
+  kernel = "gaussian", isotropic = TRUE, theta = NULL,
+  loss = "brier", ess = "none", n_multi_start = NULL, n_threads = 1)
+```
+
+- The second group specifies the **prior distribution**:
+
+  - `prior`: selects `"noninformative"` (default), `"fixed"`, or `"adaptive"`
+  
+  - the prior is constructed using the \fct{get\_prior} function
+  
+  - `r0` and `p0`: global prior precision and mean
+
+
+### \fct{fit\_BKP} --- Kernel Specification
+
+```{r fit-BKP-kernel, eval=FALSE}
+fit_BKP(X, y, m, Xbounds = NULL,
+  prior = "noninformative", r0 = 2, p0 = mean(y / m),
+  kernel = "gaussian", isotropic = TRUE, theta = NULL,
+  loss = "brier", ess = "none", n_multi_start = NULL, n_threads = 1)
+```
+
+- The third group specifies the **kernel and length-scale structure**:
+
+  - `kernel`: `"gaussian"` (default), `"matern52"`, `"matern32"`, or `"wendland"`
+  
+  - `isotropic`: `TRUE` uses one shared length scale; `FALSE` uses dimension-specific length scales
+  
+  - `theta`: a positive scalar for isotropic kernels, or a scalar/length-\(d\) vector for anisotropic kernels
+  
+  - If `theta = NULL`, it is selected by LOOCV; otherwise, the supplied value is used and optimization is skipped
+
+
+### \fct{fit\_BKP} --- Tuning and Computation
+
+```{r fit-BKP-tuning, eval=FALSE}
+fit_BKP(X, y, m, Xbounds = NULL,
+  prior = "noninformative", r0 = 2, p0 = mean(y / m),
+  kernel = "gaussian", isotropic = TRUE, theta = NULL,
+  loss = "brier", ess = "none", n_multi_start = NULL, n_threads = 1)
+```
+
+- The final group controls **hyperparameter tuning, ESS calibration, and computation**:
+
+  - `loss`: `"brier"` (default) or `"log_loss"` for LOOCV tuning
+  
+  - `ess`: `"none"` uses the standard BKP update; `"shepard"` calibrates the kernel-weighted data precision
+  
+  - `n_multi_start`: number of optimization starts; if `NULL`, the default is \(10\) for isotropic kernels and \(10d\) for anisotropic kernels
+  
+  - `n_threads`: number of threads used in multi-start optimization; relevant only when `theta = NULL`
+  
+
+### \fct{fit\_BKP} --- Returned Object
+
+```{r fit-BKP-object, eval=FALSE}
+BKPmodel <- fit_BKP(X, y, m, Xbounds = Xbounds)
+```
+
+- The returned `BKP` object stores:
+
+  - the fitted kernel, length-scale parameters, and LOOCV results
+
+  - the prior specification and Beta prior parameters
+
+  - the original and normalized training data
+
+  - the posterior parameters \(\alpha_n\) and \(\beta_n\)
+
+- It supports downstream calls to \fct{predict}, \fct{simulate}, \fct{summary}, \fct{plot}, and \fct{print}.
 
 
 
