@@ -741,25 +741,111 @@ predict(BKP_model_1D_1, Xnew)
 
 ---
 
-:::::: {.cols data-latex=""}
+\begin{columns}[c,onlytextwidth]
 
-::: {.col data-latex="{0.5\textwidth}"}
+\begin{column}{0.5\textwidth}
 
-```{r, echo=FALSE, fig.align='center', out.width='100%'}
-knitr::include_graphics("ex1.pdf")
-```
+\centering
+\includegraphics[width=\linewidth]{ex1.pdf}
 
-:::
+\end{column}
 
-::: {.col data-latex="{0.5\textwidth}"}
+\begin{column}{0.5\textwidth}
 
-```{r, echo=FALSE, fig.align='center', out.width='100%'}
-knitr::include_graphics("ex1_sim.pdf")
-```
+\centering
+\includegraphics[width=\linewidth]{ex1_sim.pdf}
 
-:::
+\end{column}
 
-::::::
+\end{columns}
+
+
+### Highly Non-linear Curve
+
+- Define the true Bernoulli probability as
+\begin{equation}\label{eq:bkp-1d-generate-function-2}
+	\pi_{2}(x) = \frac{1}{2}\left[ 1+e^{-x^{2}}\cos \left( 10\frac{1-e^{-x}}{1+e^{-x}} \right) \right],
+\end{equation}
+where $x \in [-2,2]$. 
+
+- Data size: $n=30$
+
+---
+
+\begin{columns}[c,onlytextwidth]
+
+\begin{column}{0.5\textwidth}
+
+\centering
+\includegraphics[width=\linewidth]{ex2.pdf}
+
+\end{column}
+
+\begin{column}{0.5\textwidth}
+
+\centering
+\includegraphics[width=\linewidth]{ex2_sim.pdf}
+
+\end{column}
+
+\end{columns}
+
+
+### 2D
+
+- Let $\vec{x} \in [0,1]^2$, and define the latent surface using a re-scaled version of the Goldstein–Price function:
+\begin{align*}
+	f(\vec{x})=& \frac{\log[\{1+a(\vec{x})\}\{30+b(\vec{x})\}-8.6928]}{2.4269}, \quad \text{with}\\
+	a(\vec{x}) =& \left(4 x_1 + 4 x_2 - 3 \right)^2  \times  \notag  \\
+	& \{75 - 56 \left(x_1 + x_2 \right) + 3\left(4 x_1 - 2 \right)^2 + 6\left(4 x_1 - 2 \right)\left(4 x_2 - 2 \right) + 3\left(4 x_2 - 2 \right)^2\}, \notag \\
+	b(\vec{x}) =& \left(8 x_1 - 12 x_2 +2 \right)^2 \times \notag \\
+	& \{-14 - 128 x_1 + 12\left(4 x_1 - 2 \right)^2 + 192 x_2 - 36\left(4 x_1 - 2 \right)\left(4 x_2 - 2 \right) + 27\left(4 x_2 - 2 \right)^2 \}.\notag 
+\end{align*} 
+
+- The true Bernoulli probability surface is then defined by 
+\begin{equation}\label{eq:Goldstein-Price}
+	\pi_3(\vec{x}) = \Phi\{f(\vec{x})\}, 
+\end{equation}
+where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal distribution.
+
+---
+
+\vspace{1em}
+\begin{columns}[c,onlytextwidth]
+
+\begin{column}{0.32\textwidth}
+
+\centering
+\includegraphics[width=\linewidth]{ex3_true.pdf}
+
+\end{column}
+
+\begin{column}{0.65\textwidth}
+
+\centering
+\includegraphics[width=\linewidth]{ex3.pdf}
+
+\end{column}
+
+\end{columns}
+
+### Comparison of Computation Times
+
+\centering
+\includegraphics[width=\linewidth]{elapsed_time.pdf}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
