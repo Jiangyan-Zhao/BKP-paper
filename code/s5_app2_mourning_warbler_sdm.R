@@ -1172,6 +1172,41 @@ for (method in names(raster_preds)) {
   all_vars[[method]] <- p_var
 }
 
+## -------------------------------------------------------------------------
+## BKP-only probability and uncertainty figure
+## -------------------------------------------------------------------------
+
+p_bkp_only <- gridExtra::arrangeGrob(
+  all_probs$BKP,
+  all_vars$BKP,
+  ncol = 2
+)
+
+ggsave(
+  "code/figure/mourning_warbler_map_bkp.pdf",
+  plot = p_bkp_only,
+  width = 13.0,
+  height = 3.8,
+  dpi = 300
+)
+
+## -------------------------------------------------------------------------
+## TwinBKP-only probability and uncertainty figure
+## -------------------------------------------------------------------------
+
+p_twinbkp_only <- gridExtra::arrangeGrob(
+  all_probs$TwinBKP,
+  all_vars$TwinBKP,
+  ncol = 2
+)
+
+ggsave(
+  "code/figure/mourning_warbler_map_twinbkp.pdf",
+  plot = p_twinbkp_only,
+  width = 13.0,
+  height = 3.8,
+  dpi = 300
+)
 
 ## -------------------------------------------------------------------------
 ## Combined manuscript figure

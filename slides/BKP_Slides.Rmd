@@ -695,10 +695,14 @@ BKPmodel <- fit_BKP(X, y, m, Xbounds = Xbounds)
 
 ### Example 1: Logistic Probability Curve
 
-- Let $x\in[-2,2]$, and suppose the true Bernoulli probability function is given by
-\begin{equation}\label{eq:bkp-1d-generate-function-1}
-	\pi_{1}(x) = \frac{1}{1+e^{-3x}}.
-\end{equation}
+- Let \(x\in[-2,2]\), and define the true success-probability function as
+  \begin{equation}\label{eq:bkp-1d-generate-function-1}
+	  \pi_{1}(x) = \frac{1}{1+e^{-3x}}.
+  \end{equation}
+  
+- We generate binomial observations at \(n=7\) input locations.
+
+- This monotone logistic curve provides a simple benchmark for demonstrating the standard BKP workflow.
 
 ### Model Fitting
 
@@ -801,7 +805,7 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 \end{columns}
 
 
-### Example 2: Two-Dimensional Probability Surface
+### Example 3: Two-Dimensional Probability Surface
 
 - Let \(\vx\in[0,1]^2\).
 
@@ -815,9 +819,9 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 
 - We generate \(n=100\) binomial observations and fit the BKP model.
 
----
+### Posterior Inference for the Two-Dimensional Surface
 
-\vspace{1em}
+\vspace{0.5em}
 \begin{columns}[c,onlytextwidth]
 
 \begin{column}{0.32\textwidth}
@@ -827,7 +831,7 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 
 \end{column}
 
-\begin{column}{0.65\textwidth}
+\begin{column}{0.6\textwidth}
 
 \centering
 \includegraphics[width=\linewidth]{ex3.pdf}
@@ -842,10 +846,51 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 \includegraphics[width=\linewidth]{elapsed_time.pdf}
 
 
+# Real-Data Application
 
+### Mourning Warbler Distribution Modeling
 
+\begin{columns}[c,onlytextwidth]
 
+\begin{column}{0.57\textwidth}
 
+\centering
+\includegraphics[width=\linewidth]{mourning_warbler_map_distribution.pdf}
+
+\end{column}
+
+\hfill
+
+\begin{column}{0.43\textwidth}
+
+\begin{itemize}
+\small
+\item Presence--absence data from the North American Breeding Bird Survey
+
+\item \(1{,}613\) training observations and \(301\) spatially withheld test observations
+
+\item Eight continuous bioclimatic predictors
+
+\item Longitude and latitude are used only for spatial partitioning and visualization
+
+\item The response is Bernoulli, so \(m_i=1\) for every observation
+\end{itemize}
+\end{column}
+
+\end{columns}
+
+\vspace{0.3em}
+
+\begin{center}
+The disc-based test regions provide a spatial-transfer assessment rather than a conventional random train--test split.
+\end{center}
+
+### Prediction
+
+\begin{center}
+\hspace*{-0.1\textwidth}
+\includegraphics[width=1.2\linewidth]{mourning_warbler_map_bkp.pdf}
+\end{center}
 
 
 
