@@ -379,8 +379,8 @@ h(\vx,\vx';\vtheta)=
 \]
 
 \begin{itemize}
-\item Smaller \(\theta_j\): more local borrowing and greater sensitivity along dimension \(j\)
-\item Larger \(\theta_j\): smoother borrowing over longer distances
+\item Smaller \(\theta_j\): more localized borrowing and greater sensitivity along dimension \(j\)
+\item Larger \(\theta_j\): broader borrowing over longer distances
 \end{itemize}
 
 \end{block}
@@ -403,7 +403,7 @@ h(\vx,\vx';\vtheta)=
 \]
 
 \begin{center}
-A common length scale provides uniform smoothing, whereas dimension-specific length scales allow directional adaptation
+An isotropic kernel uses a common length scale across dimensions, whereas an anisotropic kernel allows dimension-specific borrowing ranges
 \end{center}
 
 \end{block}
@@ -433,7 +433,7 @@ k(h) &= \left(1+\sqrt{5}h+\frac{5}{3}h^2\right)\exp(-\sqrt{5}h),\\[0.5em]
 \text{Mat{\'e}rn }3/2:\qquad
 k(h) &= \left(1+\sqrt{3}h\right)\exp(-\sqrt{3}h),\\[0.5em]
 \text{Wendland:}\qquad
-k(h) &= (\zeta h+1)\max(0,1-h)^\zeta, \quad \zeta=\lfloor d/2\rfloor+3.
+k(h) &= (\zeta h+1)\max\{0,1-h\}^{\zeta}, \quad \zeta=\lfloor d/2\rfloor+3.
 \end{aligned}
 \]
 \end{block}
@@ -447,7 +447,7 @@ k(h) &= (\zeta h+1)\max(0,1-h)^\zeta, \quad \zeta=\lfloor d/2\rfloor+3.
 \centering
 Noncompact support
 
-All observations receive positive weight, although the influence decreases with distance.
+Every observation at a finite distance receives a positive weight, although the weight decreases with distance.
 \end{block}
 \end{column}
 
@@ -463,6 +463,148 @@ Observations with \(h\geq 1\) receive exactly zero weight.
 \end{column}
 
 \end{columns}
+
+
+### LOOCV-Based Length-Scale Selection
+
+For each candidate \(\vtheta\), evaluate predictive performance by leave-one-out cross-validation.
+
+\vspace{0.4em}
+
+\begin{block}{Leave-one-out prediction}
+\small
+\[
+\widehat{\pi}^{-i}(\vx_i;\vtheta)
+\]
+
+denotes the predicted probability at \(\vx_i\) after excluding the \(i\)th observation.
+
+\begin{center}
+All leave-one-out predictions are computed from a single kernel matrix by setting its diagonal entries to zero.
+\end{center}
+\end{block}
+
+\vspace{0.3em}
+
+\begin{columns}[c,onlytextwidth]
+
+\begin{column}{0.46\textwidth}
+
+\begin{block}{Brier score}
+\footnotesize
+\[
+\mathrm{BS}(\vtheta)=\frac{1}{n}\sum_{i=1}^{n}
+\left\{\widehat{\pi}^{-i}(\vx_i;\vtheta)-\widetilde{\pi}_i\right\}^{2}
+\]
+
+\begin{center}
+Emphasizes squared probability-estimation error
+\end{center}
+\end{block}
+
+\end{column}
+
+\hfill
+
+\begin{column}{0.49\textwidth}
+
+\begin{block}{Log-loss}
+\scriptsize
+\[
+\mathrm{LL}(\vtheta)=-\frac{1}{n}\sum_{i=1}^{n}
+\left[
+\widetilde{\pi}_i\log\widehat{\pi}^{-i}(\vx_i;\vtheta)
++(1-\widetilde{\pi}_i)\log\{1-\widehat{\pi}^{-i}(\vx_i;\vtheta)\}
+\right]
+\]
+
+\begin{center}
+Penalizes overconfident probability errors more strongly
+\end{center}
+\end{block}
+
+\end{column}
+
+\end{columns}
+
+\vspace{0.3em}
+
+\begin{alertblock}{Objective}
+\centering
+Select the length-scale parameters that minimize the chosen LOOCV loss, where \(\widetilde{\pi}_i=y_i/m_i\).
+\end{alertblock}
+
+### Multi-Start Hyperparameter Optimization
+
+\begin{columns}[c,onlytextwidth]
+
+\begin{column}{0.42\textwidth}
+
+\begin{block}{Log-scale reparameterization}
+\small
+\[
+\gamma_j=\log_{10}(\theta_j),
+\qquad
+\theta_j=10^{\gamma_j}.
+\]
+
+\[
+d_\gamma=
+\begin{cases}
+1, & \text{isotropic},\\
+d, & \text{anisotropic}.
+\end{cases}
+\]
+
+\begin{center}
+The transformation enforces positive length-scale parameters
+\end{center}
+\end{block}
+
+\end{column}
+
+\hfill
+
+\begin{column}{0.53\textwidth}
+
+\begin{block}{Optimization workflow}
+
+\begin{enumerate}
+
+\item Generate \(n_0=10d_\gamma\) initial values using a Latin hypercube design
+
+\item Run the derivative-free SBPLX algorithm from each initial value
+
+\item Retain the solution with the smallest LOOCV loss
+
+\end{enumerate}
+
+\[
+\widehat{\vgamma}
+=
+\underset{\vgamma\in[-3,3]^{d_\gamma}}{\argmin}
+\;L(\vgamma;\calD)
+\]
+
+\end{block}
+
+\end{column}
+
+\end{columns}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Why multi-start?}
+\centering
+The LOOCV objective may be non-convex, so multiple initial values reduce sensitivity to a single local optimum.
+\end{alertblock}
+
+
+
+
+
+
+
 
 
 
