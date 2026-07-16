@@ -364,6 +364,105 @@ The prior mean follows the local empirical proportion, while the prior precision
 \end{block}
 
 
+### Scaled Distance and Length-Scale Parameters
+
+\begin{columns}[c,onlytextwidth]
+
+\begin{column}{0.48\textwidth}
+
+\begin{block}{Scaled distance}
+\small
+\[
+h(\vx,\vx';\vtheta)=
+\sqrt{\sum_{j=1}^{d}
+\left(\frac{x_j-x_j'}{\theta_j}\right)^2}.
+\]
+
+\begin{itemize}
+\item Smaller \(\theta_j\): more local borrowing and greater sensitivity along dimension \(j\)
+\item Larger \(\theta_j\): smoother borrowing over longer distances
+\end{itemize}
+
+\end{block}
+
+\end{column}
+
+\hfill
+
+\begin{column}{0.47\textwidth}
+
+\begin{block}{Length-scale structure}
+\small
+\[
+\text{Isotropic:}\qquad
+\theta_1=\cdots=\theta_d=\theta
+\]
+\[
+\text{Anisotropic:}\qquad
+\vtheta=(\theta_1,\ldots,\theta_d)
+\]
+
+\begin{center}
+A common length scale provides uniform smoothing, whereas dimension-specific length scales allow directional adaptation
+\end{center}
+
+\end{block}
+
+\end{column}
+
+\end{columns}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Modeling role}
+\centering
+The length-scale parameters determine how rapidly information borrowing decreases with distance.
+\end{alertblock}
+
+
+### Kernel Functions
+
+\begin{block}{Implemented kernels}
+\small
+\[
+\begin{aligned}
+\text{Gaussian:}\qquad
+k(h) &= \exp(-h^2),\\[0.5em]
+\text{Mat{\'e}rn }5/2:\qquad
+k(h) &= \left(1+\sqrt{5}h+\frac{5}{3}h^2\right)\exp(-\sqrt{5}h),\\[0.5em]
+\text{Mat{\'e}rn }3/2:\qquad
+k(h) &= \left(1+\sqrt{3}h\right)\exp(-\sqrt{3}h),\\[0.5em]
+\text{Wendland:}\qquad
+k(h) &= (\zeta h+1)\max(0,1-h)^\zeta, \quad \zeta=\lfloor d/2\rfloor+3.
+\end{aligned}
+\]
+\end{block}
+
+\vspace{0.4em}
+
+\begin{columns}[c,onlytextwidth]
+
+\begin{column}{0.47\textwidth}
+\begin{block}{Gaussian and Mat{\'e}rn}
+\centering
+Noncompact support
+
+All observations receive positive weight, although the influence decreases with distance.
+\end{block}
+\end{column}
+
+\hfill
+
+\begin{column}{0.47\textwidth}
+\begin{block}{Wendland}
+\centering
+Compact support
+
+Observations with \(h\geq 1\) receive exactly zero weight.
+\end{block}
+\end{column}
+
+\end{columns}
 
 
 
@@ -380,40 +479,6 @@ The prior mean follows the local empirical proportion, while the prior precision
 
 
 
-
-
-
-# Summary
-
-### Summary
-
-- Developed the \textcolor{red}{\bf first publicly available \pkg{BKP} package} implementing BKP and DKP models
-
-- \textcolor{red}{\bf Methodological contributions:}
-
-  - Provided a **Bayesian interpretation** of the BKP model
-
-  - Proposed a **flexible framework for constructing priors**, including data-adaptive options
-
-  - Developed a **robust and efficient hyperparameter optimization strategy** using LOOCV and multi-start reparameterization.
-
-### Future Development Directions
-
-- **Model extensions**: Extend the BKP framework to multivariate, functional, and spatio-temporal data, as well as mixed-type covariates
-
-- **Alternative likelihoods**: Explore likelihoods beyond the binomial family, e.g., negative binomial for over-dispersed counts, geometric for waiting-time modeling
-
-- **Community contributions**: We invite developers to contribute via GitHub pull requests \href{https://github.com/Jiangyan-Zhao/BKP/pulls}{\texttt{https://github.com/Jiangyan-Zhao/BKP/pulls}}
-
-### Resources
-
-- \textcolor{blue}{\faRProject}\  \href{https://cran.r-project.org/web/packages/BKP/index.html}{\texttt{https://cran.r-project.org/web/packages/BKP/index.html}}
-
-
-- \text{\hspace{0.1cm}}\textcolor{black}{\faGithub}\hspace{0.1cm} \href{https://github.com/Jiangyan-Zhao/BKP}{\texttt{https://github.com/Jiangyan-Zhao/BKP}}
-
-
-- \text{\hspace{0.15cm}}\textcolor{red}{\faFilePdf}\hspace{0.15cm} \href{https://arxiv.org/abs/2508.10447}{\texttt{https://arxiv.org/abs/2508.10447}}
 
 
 ---
