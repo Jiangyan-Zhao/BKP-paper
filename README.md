@@ -1,16 +1,30 @@
 # BKP: An R Package for Beta Kernel Process Modeling
 
-This repository contains the reproducibility materials, manuscript source files, and presentation slides for the BKP software paper.
+This repository contains the reproducibility materials, manuscript source
+files, and presentation slides for the BKP software paper.
 
-It includes the analysis scripts, data-processing code, generated figures, numerical results, manuscript files, and Beamer presentation materials.
+It includes the analysis scripts, data-processing code, generated figures,
+numerical results, manuscript files, and Beamer presentation materials.
 
 The repository is organized to reproduce:
 
-1.  the illustrative examples in Section 4;
-2.  the real-data applications in Section 5;
-3.  the predictive-coverage simulation reported in the appendix.
+1. the illustrative examples in Section 4;
+2. the real-data applications in Section 5;
+3. the predictive-coverage simulation reported in the appendix.
 
-A compiled version of the manuscript is available at [`paper/TR_BKP.pdf`](paper/TR_BKP.pdf), and the presentation slides are available at [`slides/BKP_Slides.pdf`](slides/BKP_Slides.pdf).
+A compiled version of the manuscript is available at
+[`paper/TR_BKP.pdf`](paper/TR_BKP.pdf), and the presentation slides are
+available at [`slides/BKP_Slides.pdf`](slides/BKP_Slides.pdf).
+
+## Project links
+
+- **Interactive website:** [BKP project website](https://jiangyan-zhao.github.io/BKP-website/)
+- **R package:** [BKP on CRAN](https://cran.r-project.org/web/packages/BKP/BKP.html)
+- **Package development:** [Jiangyan-Zhao/BKP](https://github.com/Jiangyan-Zhao/BKP)
+- **Paper:** [arXiv:2508.10447](https://arxiv.org/abs/2508.10447)
+- **Presentation slides:** [`slides/BKP_Slides.pdf`](slides/BKP_Slides.pdf)
+
+## Repository structure
 
 ## Repository structure
 
@@ -48,13 +62,15 @@ BKP-paper/
 │   ├── ecnu_title.png
 │   ├── Thanks.png
 │   └── qr_website.png
+├── BKP-paper.Rproj
 ├── renv.lock
 └── README.md
 ```
 
 ## Requirements
 
-The analyses were run in R using the package environment recorded in `renv.lock`. The current lockfile records `BKP` version 0.3.1.
+The analyses were run in R using the package environment recorded in `renv.lock`. 
+The current lockfile records `BKP` version 0.3.1.
 
 To restore the package environment, open the repository as an R project and run:
 
@@ -62,7 +78,11 @@ To restore the package environment, open the repository as an R project and run:
 renv::restore()
 ```
 
-The main package used in the paper is `BKP`. The reproduction scripts also use several supporting packages, including `tgp`, `gplite`, `kernlab`, `pROC`, `mlbench`, `ggplot2`, `gridExtra`, `RiskMap`, `sf`, `terra`, `maps`, `rnaturalearth`, and related dependencies.
+The main package used in the paper is `BKP`. 
+The reproduction scripts also use several supporting packages, 
+including `tgp`, `gplite`, `kernlab`, `pROC`, `mlbench`, 
+`ggplot2`, `gridExtra`, `RiskMap`, `sf`, `terra`, `maps`, `rnaturalearth`, 
+and related dependencies.
 
 ## Reproducing all analyses
 
@@ -127,7 +147,8 @@ The Loa loa prevalence mapping application can be reproduced using:
 source("code/s5_app1_loaloa_prevalence_mapping.R")
 ```
 
-This application uses the `loaloa` dataset from the `RiskMap` package and compares BKP with a logistic Gaussian process model.
+This application uses the `loaloa` dataset from the `RiskMap` package and 
+compares BKP with a logistic Gaussian process model.
 
 The Mourning Warbler species distribution application can be reproduced using:
 
@@ -141,7 +162,8 @@ The observation data and WorldClim raster files required for this application ar
 code/data/
 ```
 
-The analysis compares BKP, TwinBKP, and a logistic Gaussian process model using eight bioclimatic covariates. It includes model fitting, test-set evaluation, ROC analysis, and raster-level geographic projection.
+The analysis compares BKP, TwinBKP, and a logistic Gaussian process model using eight bioclimatic covariates. 
+It includes model fitting, test-set evaluation, ROC analysis, and raster-level geographic projection.
 
 ## Appendix: Predictive-coverage simulation
 
@@ -157,7 +179,9 @@ The script compares:
 - BKP with Shepard effective-sample-size calibration;
 - a logistic Gaussian process model.
 
-The simulation considers sample sizes `n = 30` and `n = 100`. Pointwise interval coverage is evaluated at 2,000 fixed grid locations and at the original training locations over 100 independent simulation replications.
+The simulation considers sample sizes `n = 30` and `n = 100`. 
+Pointwise interval coverage is evaluated at 2,000 fixed grid locations 
+and at the original training locations over 100 independent simulation replications.
 
 The appendix script generates:
 
@@ -168,7 +192,8 @@ code/result/coverage_summary.csv
 
 ## Timing experiment
 
-The timing comparison in Example 3 can be computationally expensive. By default, the script reads the precomputed average timing results from:
+The timing comparison in Example 3 can be computationally expensive. 
+By default, the script reads the precomputed average timing results from:
 
 ``` text
 code/result/elapsed_time_avg.csv
@@ -180,7 +205,8 @@ To rerun the full timing experiment, edit the following line in `code/s4_ex3_bkp
 run_elapsed_time <- TRUE
 ```
 
-The full timing experiment may take substantial time, especially for the optimized logistic Gaussian process benchmark.
+The full timing experiment may take substantial time, 
+especially for the optimized logistic Gaussian process benchmark.
 
 ## Computationally intensive components
 
@@ -192,7 +218,8 @@ The most computationally intensive components are:
 - the Mourning Warbler raster-level prediction;
 - the repeated appendix coverage simulation.
 
-The precomputed timing results are included so that the default Example 3 workflow can be reproduced without rerunning the full timing experiment.
+The precomputed timing results are included 
+so that the default Example 3 workflow can be reproduced without rerunning the full timing experiment.
 
 ## Manuscript
 
@@ -236,7 +263,9 @@ A compiled version of the presentation is provided at:
 slides/BKP_Slides.pdf
 ```
 
-The presentation uses the custom Beamer configuration in `slides/preamble.tex` and `slides/ecnu.sty`. Slide-specific assets, including the ECNU logos, the closing image, and the BKP website QR code, are also stored in `slides/`.
+The presentation uses the custom Beamer configuration in `slides/preamble.tex` and `slides/ecnu.sty`. 
+Slide-specific assets, including the ECNU logos, the closing image, 
+and the BKP website QR code, are also stored in `slides/`.
 
 The slides reuse the generated figures from:
 
@@ -266,7 +295,8 @@ A working LaTeX distribution, such as TinyTeX or TeX Live, is also required.
 
 ## Working directory
 
-Run the analysis scripts and render the presentation from the repository root, namely the directory containing `renv.lock`, `code/`, `paper/`, and `slides/`.
+Run the analysis scripts and render the presentation from the repository root, 
+namely the directory containing `renv.lock`, `code/`, `paper/`, and `slides/`.
 
 For example, run:
 
@@ -280,11 +310,14 @@ or render the slides using:
 rmarkdown::render("slides/BKP_Slides.Rmd")
 ```
 
-Do not change the working directory to `code/` before running the scripts, because paths such as `code/data/`, `code/figure/`, and `code/result/` are defined relative to the repository root.
+Do not change the working directory to `code/` before running the scripts, 
+because paths such as `code/data/`, `code/figure/`, and `code/result/` 
+are defined relative to the repository root.
 
 ## Reproducibility notes
 
-For a clean reproduction, avoid relying on saved R workspaces such as `.RData`. These files are ignored by `.gitignore`.
+For a clean reproduction, avoid relying on saved R workspaces such as `.RData`. 
+These files are ignored by `.gitignore`.
 
 After restoring the package environment, the synchronization status can be checked using:
 
@@ -292,4 +325,5 @@ After restoring the package environment, the synchronization status can be check
 renv::status()
 ```
 
-A synchronized project should report that no package versions differ between the project library and `renv.lock`.
+A synchronized project should report that no package versions differ 
+between the project library and `renv.lock`.

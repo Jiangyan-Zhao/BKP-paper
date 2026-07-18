@@ -763,7 +763,9 @@ BKPmodel <- fit_BKP(X, y, m, Xbounds = Xbounds)
 - The fitted object supports standard S3 methods, including \fct{summary}, \fct{predict}, \fct{plot}, \fct{simulate}, and \fct{print}.
 
 
-# Examples
+# Examples and Applications
+
+## Synthetic Examples
 
 ### Example 1: Logistic Probability Curve
 
@@ -969,7 +971,7 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 \includegraphics[width=\linewidth]{elapsed_time.pdf}
 
 
-# Real-Data Application
+## Real-Data Application
 
 ### Mourning Warbler Distribution Modeling
 
@@ -1016,7 +1018,9 @@ The disc-based test regions provide a spatial-transfer assessment rather than a 
 \end{center}
 
 
-# TwinBKP
+# Extensions
+
+## TwinBKP
 
 ### Scalable BKP via a Global--Local Approximation
 
@@ -1312,7 +1316,7 @@ LGP     & 0.852 & 0.0798 & 535.50 \\
 \end{center}
 
 
-# DKP
+## DKP
 
 ### Extension to Multiclass Responses: DKP
 
