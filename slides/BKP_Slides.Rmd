@@ -76,7 +76,7 @@ Estimate the underlying probability surface \(\pi(\vx)\) and quantify its pointw
 \end{columns}
 
 
-### Existing Approaches and the Remaining Gap
+### The Gap Between Flexibility and Tractable Inference
 
 \begin{columns}[T,onlytextwidth]
 
@@ -240,9 +240,10 @@ Closed-form posterior inference
 \textbf{flexible modeling with closed-form posterior inference}.
 \end{alertblock}
 
+
+\vfill
 \footnotesize
-BKP is a Bayesian-inspired probability-scale smoother based on
-kernel-weighted local-likelihood conjugate updating
+BKP is a \textcolor{blue}{Bayesian-inspired} probability-scale smoother based on kernel-weighted local-likelihood conjugate updating
 \citep{Goetschalckx:2011,MacKenzie2014,Rolland2019BKP,Fan1998LocalMLE}.
 
 
@@ -319,12 +320,12 @@ Conditional on the kernel hyperparameters, posterior summaries and predictive di
 \begin{alertblock}{Idea}
 \small
 \begin{itemize}
-\item When trial sizes are heterogeneous, the standard kernel-weighted data contribution to posterior precision,
+\item When trial sizes are {\bf heterogeneous}, the standard kernel-weighted data contribution to \textcolor{red}{posterior precision},
 $$
   m_K(\vx)=\vk(\vx)^\top\vm,
 $$
-may misrepresent the intended amount of local information.
-\item ESS calibration rescales the data pseudo-count to a Shepard-based target \citep{Shepard1968} while preserving the kernel-weighted empirical success proportion.
+may {\bf misrepresent} the intended amount of local information.
+\item ESS calibration {\bf rescales} the data pseudo-count to a Shepard-based target \citep{Shepard1968} while preserving the kernel-weighted \textcolor{red}{empirical success proportion}.
 \end{itemize}
 \end{alertblock}
 
@@ -342,11 +343,11 @@ $$\begin{aligned}
 \end{aligned}$$
 
 
-\(m_{\mathrm S}(\vx)\) interpolates the observed trial sizes.
+\(m_{\mathrm S}(\vx)\) \textcolor{red}{interpolates} the observed trial sizes.
 
 \vspace{0.3em}
 
-\(\rho(\vx)\) attenuates the target ESS in regions with weak data support.
+\(\rho(\vx)\) \textcolor{blue}{attenuates} the target ESS in regions with weak data support.
 
 
 \end{block}
@@ -416,7 +417,7 @@ $$
 $$
 
 \begin{center}
-A fixed prior mean \(p_0\) with precision controlled by \(r_0\)
+A fixed \textcolor{red}{prior mean} \(p_0\) with \textcolor{blue}{precision} controlled by \(r_0\)
 \end{center}
 
 \end{block}
@@ -438,109 +439,255 @@ $$
 $$
 
 \begin{center}
-The prior mean follows the local empirical proportion, while the prior precision adapts to the local kernel mass
+The \textcolor{red}{prior mean} follows the local empirical proportion, while the \textcolor{blue}{prior precision} adapts to the local kernel mass
 \end{center}
 
 \end{block}
 
 
-### Scaled Distance and Length-Scale Parameters
+<!-- ### Scaled Distance and Length-Scale Parameters -->
 
-\begin{columns}[c,onlytextwidth]
+<!-- \begin{columns}[c,onlytextwidth] -->
 
-\begin{column}{0.48\textwidth}
+<!-- \begin{column}{0.48\textwidth} -->
+
+<!-- \begin{block}{Scaled distance} -->
+<!-- \small -->
+<!-- $$ -->
+<!--   h(\vx,\vx';\vtheta)=\sqrt{\sum_{j=1}^{d}\left(\frac{x_j-x_j'}{\theta_j}\right)^2}. -->
+<!-- $$ -->
+
+<!-- \begin{itemize} -->
+<!-- \item Smaller \(\theta_j\): more localized borrowing -->
+<!-- \item Larger \(\theta_j\): broader borrowing -->
+<!-- \end{itemize} -->
+
+<!-- \end{block} -->
+
+<!-- \end{column} -->
+
+<!-- \hfill -->
+
+<!-- \begin{column}{0.47\textwidth} -->
+
+<!-- \begin{block}{Length-scale structure} -->
+<!-- \small -->
+<!-- $$ -->
+<!-- \text{Isotropic:}\qquad -->
+<!-- \theta_1=\cdots=\theta_d=\theta -->
+<!-- $$ -->
+<!-- $$ -->
+<!-- \text{Anisotropic:}\qquad -->
+<!-- \vtheta=(\theta_1,\ldots,\theta_d) -->
+<!-- $$ -->
+
+<!-- \begin{center} -->
+<!-- An isotropic kernel uses a common length scale across dimensions, whereas an anisotropic kernel allows dimension-specific borrowing ranges -->
+<!-- \end{center} -->
+
+<!-- \end{block} -->
+
+<!-- \end{column} -->
+
+<!-- \end{columns} -->
+
+<!-- \vspace{0.5em} -->
+
+<!-- \begin{alertblock}{Modeling role} -->
+<!-- \centering -->
+<!-- The length-scale parameters determine how rapidly information borrowing decreases with distance. -->
+<!-- \end{alertblock} -->
+
+
+<!-- ### Kernel Functions -->
+
+<!-- \begin{block}{Implemented kernels} -->
+<!-- \small -->
+<!-- $$ -->
+<!-- \begin{aligned} -->
+<!-- \text{Gaussian:}\qquad -->
+<!-- k(h) &= \exp(-h^2),\\[0.5em] -->
+<!-- \text{Mat{\'e}rn }5/2:\qquad -->
+<!-- k(h) &= \left(1+\sqrt{5}h+\frac{5}{3}h^2\right)\exp(-\sqrt{5}h),\\[0.5em] -->
+<!-- \text{Mat{\'e}rn }3/2:\qquad -->
+<!-- k(h) &= \left(1+\sqrt{3}h\right)\exp(-\sqrt{3}h),\\[0.5em] -->
+<!-- \text{Wendland:}\qquad -->
+<!-- k(h) &= (\zeta h+1)\max\{0,1-h\}^{\zeta}, \quad \zeta=\lfloor d/2\rfloor+3. -->
+<!-- \end{aligned} -->
+<!-- $$ -->
+<!-- \end{block} -->
+
+<!-- \vspace{0.4em} -->
+
+<!-- \begin{columns}[c,onlytextwidth] -->
+
+<!-- \begin{column}{0.47\textwidth} -->
+<!-- \begin{block}{Gaussian and Mat{\'e}rn} -->
+<!-- \centering -->
+<!-- Noncompact support -->
+
+<!-- Every observation at a finite distance receives a positive weight, although the weight decreases with distance. -->
+<!-- \end{block} -->
+<!-- \end{column} -->
+
+<!-- \hfill -->
+
+<!-- \begin{column}{0.47\textwidth} -->
+<!-- \begin{block}{Wendland} -->
+<!-- \centering -->
+<!-- Compact support -->
+
+<!-- Observations with \(h\geq 1\) receive exactly zero weight. -->
+<!-- \end{block} -->
+<!-- \end{column} -->
+
+<!-- \end{columns} -->
+
+
+### Kernel Functions and Length Scales
+
+:::::: {.cols data-latex=""}
+
+::: {.col data-latex="{0.4\textwidth}"}
 
 \begin{block}{Scaled distance}
 \small
 $$
-  h(\vx,\vx';\vtheta)=\sqrt{\sum_{j=1}^{d}\left(\frac{x_j-x_j'}{\theta_j}\right)^2}.
+  h(\vx,\vx';\vtheta) = \sqrt{\sum_{j=1}^{d}\left(\frac{x_j-x_j'}{\theta_j}\right)^2}.
 $$
-
-\begin{itemize}
-\item Smaller \(\theta_j\): more localized borrowing and greater sensitivity along dimension \(j\)
-\item Larger \(\theta_j\): broader borrowing over longer distances
-\end{itemize}
-
 \end{block}
 
-\end{column}
-
-\hfill
-
-\begin{column}{0.47\textwidth}
+\vspace{0.15em}
 
 \begin{block}{Length-scale structure}
+\centering
 \small
-$$
-\text{Isotropic:}\qquad
-\theta_1=\cdots=\theta_d=\theta
-$$
-$$
-\text{Anisotropic:}\qquad
-\vtheta=(\theta_1,\ldots,\theta_d)
-$$
+Isotropic: $\theta_1=\cdots=\theta_d=\theta$ 
 
-\begin{center}
-An isotropic kernel uses a common length scale across dimensions, whereas an anisotropic kernel allows dimension-specific borrowing ranges
-\end{center}
+\vspace{0.3em}
 
+Anisotropic: $\vtheta=(\theta_1,\ldots,\theta_d)$
 \end{block}
 
-\end{column}
+:::
 
-\end{columns}
+::: {.col data-latex="{0.05\textwidth}"}
+\ 
+:::
 
-\vspace{0.5em}
+::: {.col data-latex="{0.55\textwidth}"}
 
-\begin{alertblock}{Modeling role}
+```{r kernel-shape-figure, echo=FALSE, fig.width=4.5, fig.height=3, out.width='100%'}
+library(ggplot2)
+
+h <- seq(0, 3, length.out = 500)
+
+## Wendland kernel is illustrated for d = 2
+d_plot <- 2
+zeta <- floor(d_plot / 2) + 3
+
+kernel_df <- rbind(
+  data.frame(
+    h = h,
+    weight = exp(-h^2),
+    kernel = "Gaussian"
+  ),
+  data.frame(
+    h = h,
+    weight = (1 + sqrt(5) * h + 5 * h^2 / 3) * exp(-sqrt(5) * h),
+    kernel = "Matérn 5/2"
+  ),
+  data.frame(
+    h = h,
+    weight = (1 + sqrt(3) * h) * exp(-sqrt(3) * h),
+    kernel = "Matérn 3/2"
+  ),
+  data.frame(
+    h = h,
+    weight = (zeta * h + 1) * pmax(0, 1 - h)^zeta,
+    kernel = "Wendland"
+  )
+)
+
+kernel_df$kernel <- factor(
+  kernel_df$kernel,
+  levels = c(
+    "Gaussian",
+    "Matérn 5/2",
+    "Matérn 3/2",
+    "Wendland"
+  )
+)
+
+ggplot(
+  kernel_df,
+  aes(
+    x = h,
+    y = weight,
+    color = kernel,
+    linetype = kernel
+  )
+) +
+  geom_line(linewidth = 1.05) +
+  geom_vline(
+    xintercept = 1,
+    linetype = "dotted",
+    linewidth = 0.6
+  ) +
+  annotate(
+    "text",
+    x = 1.08,
+    y = 0.08,
+    label = "Wendland cutoff",
+    hjust = 0,
+    size = 3.2
+  ) +
+  annotate(
+    "text",
+    x = 2.05,
+    y = 0.16,
+    label = "Noncompact support",
+    hjust = 0,
+    size = 3.2
+  ) +
+  scale_x_continuous(
+    limits = c(0, 3),
+    breaks = 0:3,
+    expand = expansion(mult = c(0, 0.02))
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1.02),
+    breaks = seq(0, 1, by = 0.25),
+    expand = expansion(mult = c(0, 0.02))
+  ) +
+  labs(
+    x = "Scaled distance h",
+    y = "Kernel weight k(h)",
+    color = NULL,
+    linetype = NULL
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    legend.position = "bottom",
+    legend.box = "horizontal",
+    panel.grid.minor = element_blank(),
+    plot.margin = margin(4, 4, 2, 4)
+  )
+```
+
+:::
+
+::::::
+
+
+\vspace{0.15em}
+
+\begin{alertblock}{Borrowing range}
 \centering
-The length-scale parameters determine how rapidly information borrowing decreases with distance.
+\small
+The kernel family controls the shape of information decay,
+whereas \(\vtheta\) controls the borrowing range.
 \end{alertblock}
-
-
-### Kernel Functions
-
-\begin{block}{Implemented kernels}
-\small
-$$
-\begin{aligned}
-\text{Gaussian:}\qquad
-k(h) &= \exp(-h^2),\\[0.5em]
-\text{Mat{\'e}rn }5/2:\qquad
-k(h) &= \left(1+\sqrt{5}h+\frac{5}{3}h^2\right)\exp(-\sqrt{5}h),\\[0.5em]
-\text{Mat{\'e}rn }3/2:\qquad
-k(h) &= \left(1+\sqrt{3}h\right)\exp(-\sqrt{3}h),\\[0.5em]
-\text{Wendland:}\qquad
-k(h) &= (\zeta h+1)\max\{0,1-h\}^{\zeta}, \quad \zeta=\lfloor d/2\rfloor+3.
-\end{aligned}
-$$
-\end{block}
-
-\vspace{0.4em}
-
-\begin{columns}[c,onlytextwidth]
-
-\begin{column}{0.47\textwidth}
-\begin{block}{Gaussian and Mat{\'e}rn}
-\centering
-Noncompact support
-
-Every observation at a finite distance receives a positive weight, although the weight decreases with distance.
-\end{block}
-\end{column}
-
-\hfill
-
-\begin{column}{0.47\textwidth}
-\begin{block}{Wendland}
-\centering
-Compact support
-
-Observations with \(h\geq 1\) receive exactly zero weight.
-\end{block}
-\end{column}
-
-\end{columns}
 
 
 ### LOOCV-Based Length-Scale Selection
@@ -773,16 +920,19 @@ BKPmodel <- fit_BKP(X, y, m, Xbounds = Xbounds)
 
 ## Synthetic Examples
 
-### Example 1: Logistic Probability Curve
+### Logistic Probability Curve
 
 - Let \(x\in[-2,2]\), and define the true success-probability function as
-  \begin{equation}\label{eq:bkp-1d-generate-function-1}
+  $$
 	  \pi_{1}(x) = \frac{1}{1+e^{-3x}}.
-  \end{equation}
+  $$
   
 - We generate binomial observations at \(n=7\) input locations.
 
 - This monotone logistic curve provides a simple benchmark for demonstrating the standard BKP workflow.
+
+- \href{https://github.com/Jiangyan-Zhao/BKP-paper/blob/master/code/s4_ex1_bkp_1d_logistic.R}{\textcolor{blue}{Reproduction code}}
+
 
 ### Model Fitting
 
@@ -851,18 +1001,18 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 \end{columns}
 
 
-### Example 2: Highly Nonlinear Probability Curve
+### Highly Nonlinear Probability Curve
 
 - Unlike the monotone logistic curve in Example 1, this probability function is non-monotone and locally oscillatory.
 
 - For \(x\in[-2,2]\), define
-
-\begin{equation}\label{eq:bkp-1d-generate-function-2}
-	\pi_{2}(x) = \frac{1}{2}\left[ 1+e^{-x^{2}}\cos \left( 10\frac{1-e^{-x}}{1+e^{-x}} \right) \right],
-\end{equation}
+  $$
+	  \pi_{2}(x) = \frac{1}{2}\left[ 1+e^{-x^{2}}\cos \left( 10\frac{1-e^{-x}}{1+e^{-x}} \right) \right],
+  $$
 
 - We generate \(n=30\) binomial observations and fit the default BKP model.
 
+- \href{https://github.com/Jiangyan-Zhao/BKP-paper/blob/master/code/s4_ex2_bkp_1d_nonlinear.R}{\textcolor{blue}{Reproduction code}}
 
 ### Posterior Inference for the Nonlinear Curve
 
@@ -936,11 +1086,11 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 \end{columns}
 
 
-### Example 3: Two-Dimensional Probability Surface
+### Two-Dimensional Probability Surface
 
 - Let \(\vx\in[0,1]^2\).
 
-- A nonlinear latent surface \(f(\vx)\) is constructed from a rescaled Goldstein--Price function.
+- A nonlinear latent surface \(f(\vx)\) is constructed from a rescaled Goldstein--Price function \citep{Picheny2013Benchmark}.
 
 - The true success probability is
   \[
@@ -949,6 +1099,8 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
   where \(\Phi(\cdot)\) is the standard normal cumulative distribution function.
 
 - We generate \(n=100\) binomial observations and fit the BKP model.
+
+- \href{https://github.com/Jiangyan-Zhao/BKP-paper/blob/master/code/s4_ex3_bkp_2d_goldstein_price.R}{\textcolor{blue}{Reproduction code}}
 
 ### Posterior Inference for the Two-Dimensional Surface
 
@@ -1013,7 +1165,7 @@ sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 \vspace{0.3em}
 
 \begin{center}
-The disc-based test regions provide a spatial-transfer assessment rather than a conventional random train--test split.
+\href{https://github.com/Jiangyan-Zhao/BKP-paper/blob/master/code/s5_app2_mourning_warbler_sdm.R}{\textcolor{blue}{Reproduction code}}
 \end{center}
 
 ### Predicted Presence Probability and Posterior Uncertainty
@@ -1054,9 +1206,8 @@ Full BKP uses all \(n\) observations at every input location.
 \begin{alertblock}{Global--local idea}
 \centering
 \begin{itemize}
-\item  global subset captures broad input--response structure
-\item prediction-specific local neighbours refine the posterior update near
-the target location
+\item The global subset provides broad coverage of the input space.
+\item Prediction-specific local neighbours refine the posterior near the target location.
 \item ref: \citet{Vakayil2022Twinning,Vakayil2024TwinGP}
 \end{itemize}
 \end{alertblock}
@@ -1065,7 +1216,6 @@ the target location
 
 \end{columns}
 
-\vspace{0.3em}
 
 \begin{block}{TwinBKP subsets}
 \small
@@ -1080,7 +1230,7 @@ $$
   L(\vx)\subset\{1,\ldots,n\}\setminus G, \qquad |L(\vx)|=\ell.
 $$
 
-The prediction-specific subset is $I(\vx)=G\cup L(\vx)$.
+% The prediction-specific subset is $I(\vx)=G\cup L(\vx)$.
 
 \end{block}
 
@@ -1118,10 +1268,10 @@ $$
 
 \hfill
 
-\begin{column}{0.51\textwidth}
+\begin{column}{0.49\textwidth}
 
 \begin{block}{Stage 2: Local refinement}
-\small
+\footnotesize
 
 The intermediate distribution is updated using the local neighbours:
 $$
@@ -1240,7 +1390,7 @@ No dense \(n\times n\) kernel matrix is stored by default.
 \end{columns}
 
 
-### Example 8: TwinBKP for a Nonlinear Probability Curve
+### Large-$n$ Illustration: TwinBKP
 
 ```{r example8-twinbkp, eval=FALSE}
 TwinBKP_model <- fit_TwinBKP(X, y, m, Xbounds = Xbounds)
@@ -1374,44 +1524,113 @@ DKP extends the BKP update from a scalar success probability to an input-depende
 \end{center}
 
 
-### Example 7: Iris Classification with DKP
+### Multiclass Illustration: Iris Classification
 
 \centering
 \includegraphics[width=\linewidth]{ex7.pdf}
 
-\footnotesize
-\(\circ\) setosa,\qquad \(\triangle\) versicolor,\qquad \(+\) virginica.
+\vspace*{-1em}
+
+\begin{center}
+\href{https://github.com/Jiangyan-Zhao/BKP-paper/blob/master/code/s4_ex7_dkp_iris_classification.R}{\textcolor{blue}{Reproduction code}}
+\end{center}
 
 
 # Summary
 
 ### Summary
 
-\begin{block}{Core contribution}
+\begin{alertblock}{One Grammar, Four Models}
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lcc}
+\toprule
+Response type
+& Full-data model
+& Global--local approximation \\
+\midrule
+
+Binary or binomial
+& \fct{fit\_BKP}
+& \fct{fit\_TwinBKP} \\[0.3em]
+
+Categorical or multinomial
+& \fct{fit\_DKP}
+&\fct{fit\_TwinDKP} \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{alertblock}
+
+\begin{block}{Computational Profile}
+
 \small
-To our knowledge, \pkg{BKP} is the first publicly available
-\proglang{R} package dedicated to BKP and DKP methodology for
-input-dependent binomial and multinomial probabilities.
+
+\centering
+\renewcommand{\arraystretch}{1.25}
+
+\begin{tabular}{lcccc}
+\toprule
+Method
+& Inference
+& Fitting / tuning
+& Memory
+& Pointwise prediction \\
+\midrule
+
+BKP
+&
+\multirow{2}{*}{\shortstack{Direct,\\closed-form}}
+&
+\(\mathcal{O}(Tn^2)\)
+&
+\(\mathcal{O}(n^2)\)
+&
+\(\mathcal{O}(n)\)
+\\
+
+TwinBKP
+&
+&
+\(\mathcal{O}(n\log n+T_g g^2)\)
+&
+\(\mathcal{O}(n+g^2)\)
+&
+\(\mathcal{O}(\log n+g+\ell)\)
+\\
+
+Dense LGP
+&
+\shortstack{Latent,\\approximate}
+&
+\(\mathcal{O}(T_{\mathrm L}n^3)\)
+&
+\(\mathcal{O}(n^2)\)
+&
+\(\mathcal{O}(n^2)\)
+\\
+
+\bottomrule
+\end{tabular}
+
 \end{block}
 
-\vspace{0.25em}
+
+### Future Research Directions
 
 \begin{columns}[T,onlytextwidth]
 
 \begin{column}{0.48\textwidth}
 
-\begin{block}{Statistical framework}
+\begin{block}{Theory}
 \small
 \begin{itemize}
+\item Consistency and convergence rates for full BKP and DKP
 
-\item Performs kernel-weighted conjugate updating directly on the
-probability scale
-
-\item Provides closed-form posterior summaries and predictive
-distributions for binomial and multinomial responses
-
-\item Extends the scalar Beta update to the vector-valued
-Dirichlet update through DKP
+\item Approximation-error bounds and scaling guarantees
+for the Twin variants
 
 \end{itemize}
 \end{block}
@@ -1422,18 +1641,12 @@ Dirichlet update through DKP
 
 \begin{column}{0.48\textwidth}
 
-\begin{block}{Software and scalability}
+\begin{block}{Calibration}
 \small
 \begin{itemize}
+\item Finite-sample 95\% marginal coverage for future responses
 
-\item Supports flexible priors, four kernel families, isotropic or
-anisotropic length scales, and LOOCV-based tuning
-
-\item Provides Shepard ESS calibration for controlling the scale of
-kernel-weighted pseudo-counts
-
-\item Implements TwinBKP and TwinDKP as scalable global--local
-approximations
+\item Conditional and simultaneous calibration across the input space
 
 \end{itemize}
 \end{block}
@@ -1442,68 +1655,32 @@ approximations
 
 \end{columns}
 
-
-### Limitations and Future Directions
-
-\begin{alertblock}{Current limitation}
-\centering
-\small
-The pointwise posterior-style intervals produced by the fitted BKP
-update do not automatically provide finite-sample frequentist coverage
-guarantees.
-\end{alertblock}
-
-\begin{columns}[T,onlytextwidth]
-
-\begin{column}{0.48\textwidth}
-
-\begin{block}{Uncertainty calibration and theory}
-\small
-\begin{itemize}
-
-\item Develop conformalized BKP procedures for future Bernoulli,
-binomial, and multinomial responses
-
-\item Construct calibrated pointwise intervals and simultaneous bands
-for latent probability surfaces
-
-\item Study theoretical properties of the full and global--local
-updates
-
-\end{itemize}
-\end{block}
-
-\end{column}
-
-\hfill
-
-\begin{column}{0.48\textwidth}
+\vspace{0.35em}
 
 \begin{block}{Broader modeling scope}
 \small
+
+\begin{columns}[T,onlytextwidth]
+
+\begin{column}{0.48\textwidth}
 \begin{itemize}
-
-\item Extend the framework to functional, longitudinal,
-spatio-temporal, and multivariate responses
-
-\item Accommodate combinations of qualitative and quantitative inputs
-
-\item Explore likelihood-specific extensions for over-dispersed counts,
-waiting times, and other non-binomial outcomes
-
+\item Longitudinal, spatio-temporal, functional,
+and multivariate data
 \end{itemize}
-\end{block}
+\end{column}
 
+\hfill
+
+\begin{column}{0.48\textwidth}
+\begin{itemize}
+\item Over-dispersed counts and other
+non-binomial outcome families
+\end{itemize}
 \end{column}
 
 \end{columns}
 
-\vspace{0.25em}
-
-\begin{center}
-\small
-Community contributions through issues and pull requests are welcome.
-\end{center}
+\end{block}
 
 
 ### Resources
@@ -1580,8 +1757,8 @@ Community contributions through issues and pull requests are welcome.
 \end{columns}
 
 
----
+<!-- --- -->
 
-```{r, echo=FALSE, fig.align='center', out.width='60%'}
-knitr::include_graphics("Thanks.png")
-```
+<!-- ```{r, echo=FALSE, fig.align='center', out.width='60%'} -->
+<!-- knitr::include_graphics("Thanks.png") -->
+<!-- ``` -->
