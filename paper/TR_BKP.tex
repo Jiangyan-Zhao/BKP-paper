@@ -612,6 +612,7 @@ The resulting TwinDKP model uses the same global-local subset construction as Tw
 The \pkg{BKP} package \citep{Zhao2026BKP} implements the Beta Kernel Process (BKP) for binary and binomial response data, together with its multinomial extension, the Dirichlet Kernel Process (DKP). It also provides scalable global-local variants, namely TwinBKP and TwinDKP, for applications where full kernel-matrix construction is computationally demanding. The package follows the standard R modeling workflow, with separate functions for model fitting, posterior prediction, posterior simulation, visualization, and model summarization. It also exposes utilities for kernel construction, prior specification, and loss-based hyperparameter tuning, allowing users to adjust the kernel family, prior structure, loss criterion, and scalability settings according to the data-analysis task.
 
 The main user-facing functions and S3 methods are summarized in Table~\ref{tab:main_functions}. The package can be installed from CRAN using \code{install.packages("BKP")}; the development version is available from GitHub via \code{pak::pak("Jiangyan-Zhao/BKP")}.
+An interactive overview of the methodology, package workflow, examples, and related project resources is available from the \href{https://jiangyan-zhao.github.io/BKP-website/}{\textcolor{blue}{\pkg{BKP} project website}}.
 
 \begin{table}[!t]
 	\centering
@@ -1611,17 +1612,23 @@ For example, negative-binomial-type likelihoods may be useful for over-dispersed
 Geometric likelihoods, as special cases of negative-binomial models, may also be useful for modeling waiting times or the number of trials until the first success in reliability, survival, and event-process applications.
 Developing such extensions would require likelihood-specific conjugate or approximate updating schemes, together with appropriate uncertainty calibration and model-selection criteria.
 
-Finally, we welcome contributions from the community and invite developers to participate in the ongoing maintenance and extension of the package by submitting issues or pull requests via GitHub at \url{https://github.com/Jiangyan-Zhao/BKP}.
+Finally, we welcome contributions from the community and invite developers to participate in the ongoing maintenance and extension of the package by submitting issues or pull requests through the \href{https://github.com/Jiangyan-Zhao/BKP}{\textcolor{blue}{\pkg{BKP} GitHub repository}}.
 
 
 %% -- Optional special unnumbered sections -------------------------------------
 
-\section*{Computational details}
+\section*{Computational details  and reproducibility}
 All analyses were conducted using \proglang{R} version 4.6.1 and \pkg{BKP} version 0.3.1. The LGP comparisons were implemented using \pkg{gplite} version 0.13.0 and \pkg{kernlab} version 0.9-33, while the Two Spirals benchmark and the \code{loaloa} dataset were obtained from \pkg{mlbench} version 2.1-8 and \pkg{RiskMap} version 1.0.0, respectively. \proglang{R} and the \proglang{R} packages used in this article are available from the Comprehensive \proglang{R} Archive Network (CRAN) at \url{https://CRAN.R-project.org/}. The TwinBKP and TwinDKP implementations use the header-only \code{nanoflann} library for kd-tree nearest-neighbour search and adapt the twinning subset-selection code from the \pkg{twingp} package. Copyright and license information for these third-party components is provided in \code{inst/COPYRIGHTS} of the \pkg{BKP} package. The multi-start length-scale tuning procedure follows the log-scale parameterization and search-region construction used in \pkg{GPfit}. 
 All timing experiments reported in Figure~\ref{fig:elapsed_time} and Table~\ref{tab:model_comparison} were conducted on a machine equipped
 with an Apple M4 chip (10-core CPU) and 16 GB of unified memory.
 GPU acceleration was not used, and all methods were run using their default single-threaded settings. 
 The computation times in Figure~\ref{fig:elapsed_time} are averages over 20 independent repetitions, whereas those in Table~\ref{tab:model_comparison} are reported from a single run.
+
+Complete reproducibility materials for this article are available from the \href{https://github.com/Jiangyan-Zhao/BKP-paper}
+{\textcolor{blue}{\pkg{BKP}-paper reproducibility repository}}.
+The repository contains the analysis scripts, data-processing code, generated figures, and numerical results for the illustrative examples, real-data applications, and appendix simulation.
+The computational environment is recorded in \code{renv.lock} and can be restored using \code{renv::restore()}.
+The main analysis workflow can be run from the repository root using \code{source("code/run_all.R")}; instructions for rerunning the computationally intensive timing experiments are provided in the repository README.
 
 
 %\section*{Acknowledgments}

@@ -25,10 +25,10 @@ bibliography: ../paper/refs.bib
 biblio-style: "chicago"
 link-citations: true
 classoption: "aspectratio=169"
-colorlinks: true    # 启用链接颜色
-citecolor: blue     # 设置引文链接颜色（如 blue, red, green, magenta）
-urlcolor: blue      # 设置 URL 链接颜色
-linkcolor: red      # 设置内部跳转链接颜色（如目录）
+# colorlinks: true    # 启用链接颜色
+# citecolor: blue     # 设置引文链接颜色（如 blue, red, green, magenta）
+# urlcolor: blue      # 设置 URL 链接颜色
+# linkcolor: "."      # 使用当前位置原本的文字颜色
 ---
 
 ```{r setup, include=FALSE}
@@ -243,7 +243,7 @@ Closed-form posterior inference
 
 \vfill
 \footnotesize
-BKP is a \textcolor{red}{\bf Bayesian-inspired} probability-scale smoother based on kernel-weighted local-likelihood conjugate updating
+BKP is a \textcolor{red}{Bayesian-inspired} probability-scale smoother based on kernel-weighted local-likelihood conjugate updating
 \citep{Goetschalckx:2011,MacKenzie2014,Rolland2019BKP,Fan1998LocalMLE}.
 
 
@@ -931,7 +931,7 @@ BKPmodel <- fit_BKP(X, y, m, Xbounds = Xbounds)
 
 - This monotone logistic curve provides a simple benchmark for demonstrating the standard BKP workflow.
 
-- \href{https://github.com/Jiangyan-Zhao/BKP-paper/blob/master/code/s4_ex1_bkp_1d_logistic.R}{Reproduction code}
+- \href{https://github.com/Jiangyan-Zhao/BKP-paper/blob/master/code/s4_ex1_bkp_1d_logistic.R}{\textcolor{blue}{Reproduction code}}
 
 
 ### Model Fitting

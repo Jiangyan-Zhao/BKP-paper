@@ -155,9 +155,13 @@
           \end{minipage}}%
       \beamer@tempdim=\ht\beamer@tempbox%
       \advance\beamer@tempdim by 2pt%
-      \begin{pgfpicture}{0.1mm}{0pt}{1.01\paperwidth}{\beamer@tempdim}
+      \begin{pgfpicture}{0pt}{0pt}
+        {\dimexpr\paperwidth+1pt\relax}
+        {\beamer@tempdim}
         \usebeamercolor{frametitle right}
-        \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\beamer@tempdim}}
+        \pgfpathrectangle
+          {\pgfpointorigin}
+          {\pgfpoint{\dimexpr\paperwidth+1pt\relax}{\beamer@tempdim}}
         \pgfusepath{clip}
         \pgftext[left,base]{\pgfuseshading{beamer@frametitleshade}}
       \end{pgfpicture}
