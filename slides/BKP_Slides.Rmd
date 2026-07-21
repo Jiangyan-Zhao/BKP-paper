@@ -146,7 +146,7 @@ Can we retain nonlinear flexibility while performing direct, closed-form updatin
 \begin{block}{Beta prior}
 \footnotesize
 $$
-  \pi(\vx) \sim \operatorname{Beta} \bigl\{\alpha_0(\vx),\beta_0(\vx) \bigr\}.
+  \pi(\vx) \sim \operatorname{Beta} \bigl(\alpha_0(\vx),\beta_0(\vx) \bigr).
 $$
 
 \vspace{0.4em}
@@ -211,7 +211,7 @@ $$
 
 $$
 \begin{aligned}
-  \pi(\vx)\mid\calD &\sim \operatorname{Beta} \bigl\{\alpha_n(\vx),\beta_n(\vx)\bigr\},\\[0.4em]
+  \pi(\vx)\mid\calD &\sim \operatorname{Beta} \bigl(\alpha_n(\vx),\beta_n(\vx)\bigr),\\[0.4em]
   \alpha_n(\vx) &= \alpha_0(\vx)+S(\vx),\\[0.4em]
   \beta_n(\vx) &= \beta_0(\vx)+F(\vx).
 \end{aligned}
@@ -1237,6 +1237,19 @@ $$
 
 ### Two-Stage Conjugate Update
 
+\begin{alertblock}{TwinBKP posterior}
+\centering
+\vspace*{-0.5em}
+$$
+\pi(\vx)\mid\mathcal D_{U(\vx)}
+\sim
+\operatorname{Beta}\left(\alpha_U(\vx), \beta_U(\vx) \right),
+\qquad
+U(\vx)=G\cup L(\vx).
+$$
+\end{alertblock}
+
+
 \begin{columns}[t,onlytextwidth]
 
 \begin{column}{0.47\textwidth}
@@ -1276,13 +1289,13 @@ $$
 The intermediate distribution is updated using the local neighbours:
 $$
 \begin{aligned}
-\alpha_T(\vx)
+\alpha_U(\vx)
 &=
 \alpha_G(\vx)
 +
 \sum_{i\in L(\vx)}
 k_{\ell}(\vx,\vx_i;\theta_{\ell})y_i,\\[0.4em]
-\beta_T(\vx)
+\beta_U(\vx)
 &=
 \beta_G(\vx)
 +
@@ -1296,24 +1309,6 @@ $$
 \end{column}
 
 \end{columns}
-
-\vspace{0.3em}
-
-\begin{alertblock}{TwinBKP posterior}
-\centering
-\vspace*{-0.5em}
-$$
-\pi(\vx)\mid\mathcal D_{I(\vx)}
-\sim
-\operatorname{Beta}
-\left\{
-\alpha_T(\vx),
-\beta_T(\vx)
-\right\},
-\qquad
-I(\vx)=G\cup L(\vx).
-$$
-\end{alertblock}
 
 
 ### Kernel Tuning and Computational Scaling
@@ -1349,7 +1344,7 @@ $$
 \begin{itemize}
 \item The global length scale \(\vtheta_g\) is selected by the same LOOCV criterion as full BKP, but using only the global subset.
 
-\item The local range parameter is not separately optimized. It is set to the empirical covering radius
+\item The scalar local range parameter is not separately optimized. It is set to the empirical covering radius
 $$
 \widehat{\theta}_{\ell}
 =
@@ -1503,9 +1498,9 @@ $$
 \boldsymbol{\pi}(\vx)\mid\mathcal D_n
 \sim
 \operatorname{Dirichlet}
-\left\{
+\left(
 \boldsymbol{\alpha}_n(\vx)
-\right\},
+\right),
 $$
 $$
 \boldsymbol{\alpha}_n(\vx)
