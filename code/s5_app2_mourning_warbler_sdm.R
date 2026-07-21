@@ -459,9 +459,7 @@ t1 <- system.time({
     Xbounds = Xbounds,
     prior = "fixed",
     r0 = 0.1,
-    loss = "log_loss",
-    kernel = "gaussian",
-    isotropic = TRUE
+    loss = "log_loss"
   )
   
   bkp_pred_test <- predict(
@@ -511,10 +509,7 @@ t2 <- system.time({
     Xbounds = Xbounds,
     prior = "fixed",
     r0 = 0.1,
-    loss = "log_loss",
-    global_kernel = "gaussian",
-    local_kernel = "wendland",
-    isotropic = TRUE
+    loss = "log_loss"
   )
   
   twin_pred_test <- predict(

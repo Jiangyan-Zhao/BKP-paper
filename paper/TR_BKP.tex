@@ -100,7 +100,7 @@ An alternative route is to model the probability surface directly on the probabi
 The \pkg{BKP} package \citep{Zhao2026BKP}, developed in \proglang{R} \citep{R} and available from the Comprehensive R Archive Network (CRAN), implements this probability-scale modeling strategy through the \emph{Beta Kernel Process} (BKP). It combines kernel-weighted local likelihoods with beta-binomial conjugate updating. For each prediction input, neighboring observations contribute fractional success and failure counts through kernel weights, yielding closed-form conjugate posterior summaries for the local binomial probability. The package supports both individual binary responses and aggregated binomial counts. Its multinomial extension, the \emph{Dirichlet Kernel Process} (DKP), uses the analogous Dirichlet-multinomial conjugate update to model categorical and multinomial responses. 
 For larger datasets, the package also provides TwinBKP and TwinDKP, twinning-based global-local approximations to the full BKP and DKP updates \citep{Vakayil2022Twinning,Vakayil2024TwinGP}.
 
-The term ``Beta Kernel Process'' is used descriptively in this article. It should not be confused with the beta process in Bayesian nonparametrics \citep{Hjort1990BP}, nor with the kernel beta process for covariate-dependent feature learning \citep{Ren2011KBP}. 
+The term ``Beta Kernel Process'' is used descriptively in this article. It is distinct from the beta process in Bayesian nonparametrics \citep{Hjort1990BP}, and is not to be confused with the kernel beta process for covariate-dependent feature learning \citep{Ren2011KBP}. 
 Here, ``Beta'' refers to the beta distribution used for local binomial probability summaries, ``Kernel'' refers to kernel-weighted sharing of evidence across inputs, and ``Process'' refers to the input-indexed collection of such beta distributions over the input space. 
 The name is intended to emphasize a probability-scale analogue of kernel smoothing with an input-indexed family of probability distributions: BKP constructs an input-indexed family of conjugate beta posteriors directly on the probability scale, rather than placing a Gaussian-process prior on a latent real-valued function.
 In this article, BKP is therefore interpreted as a Bayesian-inspired, probability-scale kernel smoothing framework based on local-likelihood conjugate updating, rather than as a fully specified Bayesian stochastic-process model in the Gaussian-process sense.
@@ -113,7 +113,7 @@ These features make \pkg{BKP} suitable for probability-surface modeling tasks in
 
 The contribution of this article is twofold. 
 Methodologically, it consolidates BKP and DKP under a common local-likelihood conjugate updating formulation, clarifies their Bayesian-inspired interpretation, and extends the framework with fixed and data-adaptive prior specifications, effective-sample-size calibration, compactly supported kernels, and twinning-based global-local approximations. 
-Computationally, it provides a reproducible \proglang{R} implementation that integrates model fitting, prediction, simulation from fitted conjugate posteriors, visualization, hyperparameter tuning, and standard S3 methods for BKP, DKP, TwinBKP, and TwinDKP. The package is not intended to replace latent-GP classifiers in all settings; rather, it provides a complementary probability-scale workflow when closed-form conjugate posterior summaries, transparent local evidence borrowing, and direct binomial or multinomial updating are desirable.
+Computationally, it provides a reproducible \proglang{R} implementation that integrates model fitting, prediction, simulation from fitted conjugate posteriors, visualization, hyperparameter tuning, and standard S3 methods for BKP, DKP, TwinBKP, and TwinDKP. The package provides a probability-scale workflow when closed-form conjugate posterior summaries, transparent local evidence borrowing, and direct binomial or multinomial updating are desirable.
 
 The remainder of the paper is organized as follows. 
 Section~\ref{sec:model} presents the statistical foundation of BKP, DKP, and the TwinBKP/TwinDKP approximations. 
@@ -173,7 +173,7 @@ BKP is therefore best interpreted as a Bayesian-inspired, probability-scale smoo
 
 \begin{remark}[Pointwise prediction cost]
 	For fixed kernel hyperparameters, computing the BKP conjugate posterior at a new input location requires $\mathcal{O}(n)$ kernel evaluations and weighted aggregations, because the update in \eqref{eq:BKP_model} is available in closed form. 
-	This statement concerns prediction with fixed hyperparameters; the overall cost of model fitting, including LOOCV-based hyperparameter tuning, is discussed in Section~\ref{sec:model-selection}.
+	The overall cost of model fitting, including LOOCV-based hyperparameter tuning, is discussed in Section~\ref{sec:model-selection}.
 \end{remark}
 
 Based on the resulting conjugate posterior in \eqref{eq:BKP_model}, the posterior mean
@@ -200,7 +200,7 @@ The corresponding posterior predictive variance is
 This predictive variance accounts for both uncertainty in the latent success
 probability and binomial sampling variability.
 
-For binary classification, the posterior mean can be thresholded to produce hard predictions through
+For binary classification, the posterior mean can be thresholded to produce hard prediction through
 \begin{equation}\label{eq:class_cri}
 	\widehat{y}(\vec{x}) =
 	\begin{cases}
@@ -218,7 +218,7 @@ For the BKP update in \eqref{eq:BKP_model}, the data-driven contribution to this
 m_K(\vec{x}) = \vec{k}(\vec{x})^\top \vec{m}.
 \]
 When the binomial trial sizes $m_i$ are highly heterogeneous, this kernel-weighted trial size may either overstate or understate the effective information available near $\vec{x}$. 
-Consequently, posterior uncertainty summaries may become too concentrated or too diffuse relative to the intended local amount of information.
+Consequently, posterior uncertainty summaries may be overly concentrated or overly diffuse relative to the intended local amount of information.
 The purpose of ESS calibration is to rescale the kernel-weighted successes and failures by a common factor so that their total pseudo-count matches a target ESS, while leaving the kernel-weighted empirical success proportion unchanged.
 Here, calibration refers to matching the scale of the kernel-weighted pseudo-counts to a target effective sample size, rather than to a formal frequentist coverage guarantee.
 
@@ -416,14 +416,14 @@ The optimization procedure is summarized as follows:
 	In the full-kernel implementation, this computation is carried out by constructing an $n\times n$ kernel matrix, which requires $\mathcal{O}(n^2)$ memory. 
 	Under LOOCV-based tuning, each loss evaluation uses one zero-diagonal kernel matrix to obtain all leave-one-out predictions simultaneously. 
 	If $T$ denotes the total number of loss evaluations across all starts in the multi-start optimization, the overall computational cost of hyperparameter tuning is $\mathcal{O}(Tn^2)$, while the memory requirement remains $\mathcal{O}(n^2)$. 
-	Thus, full BKP avoids cubic GP-type matrix factorization but remains a quadratic full-kernel method; the scalable TwinBKP approximation is introduced in the next subsection.
+	Thus, full BKP avoids cubic GP-type matrix factorization but remains a quadratic full-kernel method.
 \end{remark}
 
 \subsection{Scalable BKP via a Twinning-based Global-Local Approximation}\label{sec:TwinBKP}
 
-For large datasets, the full BKP update in \eqref{eq:BKP_model} may still be computationally demanding, because model fitting requires repeated construction of kernel matrices and each posterior prediction requires kernel evaluations against all $n$ observations.
+For large datasets, the full BKP update in \eqref{eq:BKP_model} may still be computationally demanding, as model fitting requires repeated construction of kernel matrices and each posterior prediction requires kernel evaluations against all $n$ observations.
 To improve scalability, \pkg{BKP} implements a twinning-based global-local approximation, referred to as TwinBKP, inspired by the global-local design of TwinGP \citep{Vakayil2024TwinGP}. 
-Unlike TwinGP, which introduces the global-local structure through Gaussian process covariance matrices, TwinBKP adapts this idea to the conjugate beta-binomial updating structure of BKP.
+Unlike TwinGP, which introduces the global-local structure through Gaussian process covariance matrices, TwinBKP adapts the idea to the conjugate beta-binomial updating structure of BKP.
 
 \subsubsection{Global-local subset construction}
 
@@ -440,7 +440,7 @@ L(\vec{x}) \subset \{1,\ldots,n\}\setminus G, \qquad |L(\vec{x})|=\ell,
 consisting of the $\ell$ nearest neighbours of $\vec{x}$ among the remaining observations. 
 The prediction-specific subset is then
 \[
-I(\vec{x}) = G\cup L(\vec{x}).
+U(\vec{x}) = G\cup L(\vec{x}).
 \] 
 For fixed input dimension, selecting the global subset by twinning has average cost $\mathcal{O}(n\log n)$, while constructing $L(\vec{x})$ requires an $\ell$-nearest-neighbour query, with average cost $\mathcal{O}(\log n+\ell)$ per prediction location using the \code{nanoflann} kd-tree implementation \citep{Blanco2014nanoflann}.
 In the default implementation, \pkg{BKP} sets the global subset size to 
@@ -468,12 +468,12 @@ First, the global subset defines a global-informed intermediate beta distributio
 where $k_g$ is a global kernel chosen from the implemented kernel family in Table~\ref{tab:kernel-functions}, typically a smooth Gaussian or Mat{\'e}rn kernel. 
 Second, this global-informed distribution is updated using the local subset:
 \begin{align}
-	\pi(\vec{x})\mid \mathcal{D}_{I(\vec{x})} 
-	&\sim \mathrm{Beta}\{\alpha_T(\vec{x}),\beta_T(\vec{x})\}, \notag\\
-	\alpha_T(\vec{x}) 
+	\pi(\vec{x})\mid \mathcal{D}_{U(\vec{x})} 
+	&\sim \mathrm{Beta}(\alpha_T(\vec{x}),\beta_T(\vec{x})), \notag\\
+	\alpha_U(\vec{x}) 
 	&= \alpha_G(\vec{x}) 
 	+ \sum_{i\in L(\vec{x})} k_\ell(\vec{x},\vec{x}_i;\theta_\ell)y_i, \label{eq:twin-bkp}\\
-	\beta_T(\vec{x}) 
+	\beta_U(\vec{x}) 
 	&= \beta_G(\vec{x}) 
 	+ \sum_{i\in L(\vec{x})} k_\ell(\vec{x},\vec{x}_i;\theta_\ell)(m_i-y_i), \notag
 \end{align}
@@ -490,26 +490,27 @@ The global kernel parameter $\vec{\theta}_g$ is estimated by minimizing the same
 \mathcal{D}_G=\{(\vec{x}_i,y_i,m_i):i\in G\}.
 \]
 This avoids constructing the full $n\times n$ kernel matrix during tuning. 
-If $T_g$ denotes the total number of loss evaluations used in the global-subset optimization, the tuning cost is reduced from $\mathcal{O}(T n^2)$ for full BKP to $\mathcal{O}(T_g g^2)$ for TwinBKP, and the kernel-matrix memory requirement is reduced from $\mathcal{O}(n^2)$ to $\mathcal{O}(g^2)$. 
+Let $T_g$ denote the total number of loss evaluations used in the global-subset optimization. The tuning cost is reduced from $\mathcal{O}(T n^2)$ for full BKP to $\mathcal{O}(T_g g^2)$ for TwinBKP, and the kernel-matrix memory requirement is reduced from $\mathcal{O}(n^2)$ to $\mathcal{O}(g^2)$. 
 
-The local range parameter $\theta_\ell$ is not optimized separately. 
-It is set to the empirical covering radius \citep{Vakayil2024TwinGP} of the global subset on the normalized input scale,
+The scalar local range parameter $\theta_\ell$ is not optimized separately. 
+It is set to be the empirical covering radius \citep{Vakayil2024TwinGP} of the global subset on the normalized input scale,
 \[
 \widehat{\theta}_\ell 
 = \max_{1\le i\le n} \min_{j\in G} \|\vec{x}_i-\vec{x}_j\|_2 .
 \]
-This quantity is a discrete analogue of the fill distance \citep{Fasshauer2007Meshfree}, measuring how well the global subset covers the observed training inputs. 
+This quantity is the fill distance \citep{Fasshauer2007Meshfree} of the global subset relative to the empirical training design, measuring how well the global subset covers the observed training inputs.
 For the compactly supported Wendland kernel, it provides a conservative support radius for local borrowing and avoids an additional local hyperparameter optimization step.
 Using a kd-tree built on the global subset, this empirical covering radius can be computed in $\mathcal{O}(n\log g)$ time for fixed input dimension.
 
 \begin{remark}[TwinBKP fitting and prediction cost]
 	For fixed input dimension, the overall computational cost of TwinBKP is driven by global subset selection, global-subset tuning, and prediction-specific local updates. 
 	With global subset size $g$ and local subset size $\ell$, the fitting cost is 
-	$\mathcal{O}(n\log n + T_g g^2)$, where $T_g$ denotes the total number of loss evaluations used for tuning the global kernel. 
+	$\mathcal{O}(n\log n + T_g g^2)$. %\st{, where $T_g$ denotes the total number of loss evaluations used for tuning the global kernel. }
 	The corresponding memory requirement is $\mathcal{O}(n+g^2)$, including storage of the training inputs and the global kernel matrix. 
 	For prediction at $t$ locations, the computational cost is $\mathcal{O}\{t(\log n+g+\ell)\}$, combining kd-tree local-neighbour queries with beta-binomial pseudo-count aggregation over the global and local subsets.	
 	Under the default scaling rule, $g$ is controlled by both the sample size and the dimension-dependent cap $50d$, while $\ell$ is bounded by $\max(25,3d)$ for fixed $d$. 
-	With fixed optimization budgets and fixed input dimension, the fitting cost is therefore dominated by the $\mathcal{O}(n\log n)$ global-subset construction term, the prediction cost at $t$ locations is $\mathcal{O}\{t(\log n+g+\ell)\}$, and the memory requirement is $\mathcal{O}(n+g^2)$.
+	With fixed optimization budgets and fixed input dimension, the fitting cost is therefore dominated by the $\mathcal{O}(n\log n)$ global-subset construction term. 
+	%\st{, the prediction cost at $t$ locations is $\mathcal{O}\{t(\log n+g+\ell)\}$, and the memory requirement is $\mathcal{O}(n+g^2)$.}
 \end{remark}
 
 \subsection{Extension to Dirichlet Kernel Process}\label{sec:dkp}
@@ -520,13 +521,13 @@ Let the response at input $\vec{x}\in\mathcal{X}\subset\mathbb{R}^d$ be
 $\vec{y}(\vec{x})=(y_1(\vec{x}),\ldots,y_q(\vec{x}))$, where $y_s(\vec{x})$ denotes the count of class $s$ and $m(\vec{x})=\sum_{s=1}^q y_s(\vec{x})$ is the total number of trials. 
 We assume
 \[
-\vec{y}(\vec{x}) \sim \mathrm{Multinomial}\{m(\vec{x}),\vec{\pi}(\vec{x})\},
+\vec{y}(\vec{x}) \sim \mathrm{Multinomial}(m(\vec{x}),\vec{\pi}(\vec{x})),
 \]
 where $\vec{\pi}(\vec{x})=(\pi_1(\vec{x}),\ldots,\pi_q(\vec{x}))$ is a vector of class probabilities satisfying $\sum_{s=1}^q\pi_s(\vec{x})=1$.
 
 At each input location, a Dirichlet prior is assigned to the class-probability vector,
 \[
-\vec{\pi}(\vec{x})\sim\mathrm{Dirichlet}\{\vec{\alpha}_0(\vec{x})\},
+\vec{\pi}(\vec{x})\sim\mathrm{Dirichlet}(\vec{\alpha}_0(\vec{x})),
 \]
 where $\vec{\alpha}_0(\vec{x})=(\alpha_{0,1}(\vec{x}),\ldots,\alpha_{0,q}(\vec{x}))$ contains positive prior concentration parameters. 
 Given training data $\mathcal{D}_n=\{(\vec{x}_i,\vec{y}_i)\}_{i=1}^n$, let $\mathbf{Y}\in\mathbb{R}^{n\times q}$ denote the response matrix whose $i$th row is $\vec{y}_i^\top$. 
@@ -534,7 +535,7 @@ The kernel-smoothed conjugate posterior is
 \begin{equation}\label{eq:DKP_model}
 	\vec{\pi}(\vec{x}) \mid \mathcal{D}_n 
 	\sim 
-	\mathrm{Dirichlet}\{\vec{\alpha}_n(\vec{x})\},
+	\mathrm{Dirichlet}(\vec{\alpha}_n(\vec{x})),
 	\qquad
 	\vec{\alpha}_n(\vec{x}) 
 	= \vec{\alpha}_0(\vec{x}) + \vec{k}^{\top}(\vec{x})\mathbf{Y}.
@@ -545,7 +546,7 @@ The corresponding posterior predictive distribution for a future multinomial res
 	\vec{y}(\vec{x}) \mid \mathcal{D}_n, m(\vec{x})
 	\sim
 	\mathrm{Dirichlet\mbox{-}Multinomial}
-	\{m(\vec{x}), \vec{\alpha}_n(\vec{x})\}.
+	(m(\vec{x}), \vec{\alpha}_n(\vec{x})).
 \end{equation}
 
 Let $A_n(\vec{x})=\sum_{s=1}^q\alpha_{n,s}(\vec{x})$. 
@@ -612,7 +613,7 @@ The resulting TwinDKP model uses the same global-local subset construction as Tw
 The \pkg{BKP} package \citep{Zhao2026BKP} implements the Beta Kernel Process (BKP) for binary and binomial response data, together with its multinomial extension, the Dirichlet Kernel Process (DKP). It also provides scalable global-local variants, namely TwinBKP and TwinDKP, for applications where full kernel-matrix construction is computationally demanding. The package follows the standard R modeling workflow, with separate functions for model fitting, posterior prediction, posterior simulation, visualization, and model summarization. It also exposes utilities for kernel construction, prior specification, and loss-based hyperparameter tuning, allowing users to adjust the kernel family, prior structure, loss criterion, and scalability settings according to the data-analysis task.
 
 The main user-facing functions and S3 methods are summarized in Table~\ref{tab:main_functions}. The package can be installed from CRAN using \code{install.packages("BKP")}; the development version is available from GitHub via \code{pak::pak("Jiangyan-Zhao/BKP")}.
-An interactive overview of the methodology, package workflow, examples, and related project resources is available from the \href{https://jiangyan-zhao.github.io/BKP-website/}{\textcolor{blue}{\pkg{BKP} project website}}.
+An interactive overview of the methodology, package workflow, examples, and related project resources is available from the \href{https://jiangyan-zhao.github.io/BKP-website/}{\pkg{BKP} project website}.
 
 \begin{table}[!t]
 	\centering
@@ -1295,6 +1296,8 @@ The fitted \class{TwinBKP} object supports the same downstream workflow as a ful
 Figure~\ref{fig:TwinBKP_1D} shows that the TwinBKP fit follows the main nonlinear pattern of the probability function while using a compact global subset and local nearest-neighbour refinements. 
 The posterior summaries retain the beta-binomial interpretation of the full BKP model, but the pseudo-count aggregation is performed over the union of the global subset and the prediction-specific local subset rather than over all training observations.
 
+%{\bf [comments on the results and Figure 13 in contrast with the full BKP model ?..]}
+
 \paragraph{Example 9}
 We next revisit the one-dimensional three-class multinomial response setting in Example~5 to illustrate the TwinDKP interface. 
 The class-probability functions are unchanged, but the number of input locations is increased from 30 to 500. 
@@ -1326,6 +1329,9 @@ Figure~\ref{fig:TwinDKP_1D} reports the fitted TwinDKP posterior summaries, with
 
 The TwinDKP fit follows the main features of the three class-probability functions while using the same global-local approximation as TwinBKP. 
 The posterior summaries retain the Dirichlet-multinomial interpretation of the full DKP model, but the pseudo-count vector at each prediction location is aggregated over the union of the twinning-selected global subset and the prediction-specific local subset.
+
+%{\bf [comments on the results and Figure 14 in contrast with the full BKP model ?..]}
+
 
 \FloatBarrier
 
@@ -1460,7 +1466,7 @@ Together with the spatial patterns in Figure~\ref{fig:Loaloa_combined}, these re
 \subsection{Mourning Warbler distribution modeling}\label{sec:warbler}
 
 We next illustrate the use of BKP and TwinBKP for species distribution modeling using presence--absence observations of the Mourning Warbler in North America.
-Unlike the preceding application, the models are fitted in an eight-dimensional environmental covariate space rather than directly in geographic coordinates.
+Unlike the previous application, the models are fitted in an eight-dimensional environmental covariate space rather than directly in geographic coordinates.
 The example compares BKP, TwinBKP, and LGP using a predefined spatially structured test set and subsequently projects the fitted environmental relationships back into geographic space.
 
 \subsubsection{Data Preparation} 
@@ -1516,17 +1522,14 @@ The elapsed times reported below include model fitting, hyperparameter optimizat
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> # 1. Fit standard BKP
+R> # 1. Fit full BKP
 R> bkp_fit <- fit_BKP(X_train, y_train, m_train, Xbounds = Xbounds,
-+                     prior = "fixed", r0 = 0.1, loss = "log_loss",
-+                     kernel = "gaussian", isotropic = TRUE)
++                     prior = "fixed", r0 = 0.1, loss = "log_loss")
 R> bkp_pred <- predict(bkp_fit, Xnew = X_test)
 R>
 R> # 2. Fit TwinBKP
 R> twin_fit <- fit_TwinBKP(X_train, y_train, m_train, Xbounds = Xbounds,
-+                          prior = "fixed", r0 = 0.1, loss = "log_loss",
-+                          global_kernel = "gaussian", local_kernel = "wendland",
-+                          isotropic = TRUE)
++                          prior = "fixed", r0 = 0.1, loss = "log_loss")
 R> twin_pred <- predict(twin_fit, Xnew = X_test)
 R>
 R> # 3. Fit LGP (via gplite)
@@ -1603,7 +1606,7 @@ To our knowledge, \pkg{BKP} is the first publicly available software dedicated t
 The framework is intended to complement, rather than replace, latent Gaussian-process classifiers and other nonparametric probabilistic models.
 Its main advantages are that inference is performed directly on the probability scale, posterior summaries are available in closed form under the fitted local conjugate update, and the resulting workflow is transparent and easy to implement for binomial and multinomial response data.
 At the same time, BKP should be interpreted as a Bayesian-inspired local-likelihood smoothing framework, not as a fully specified Bayesian stochastic-process model in the Gaussian-process sense.
-Consequently, its credible intervals are pointwise posterior-style summaries under the fitted kernel-weighted update and do not carry automatic frequentist coverage guarantees. Appendix~\ref{app:coverage} provides a simulation-based assessment of their empirical coverage and illustrates the effect of Shepard ESS calibration. Developing conformalized BKP procedures with finite-sample marginal coverage guarantees for future responses, together with calibrated pointwise intervals or simultaneous confidence bands for the latent probability surface, remains an important direction for future research.
+Consequently, its credible intervals are pointwise posterior-style summaries under the fitted kernel-weighted update and do not carry frequentist coverage guarantees. Appendix~\ref{app:coverage} provides a simulation-based assessment of their empirical coverage and illustrates the effect of Shepard ESS calibration. Developing conformalized BKP procedures with finite-sample marginal coverage guarantees for future responses, together with calibrated pointwise intervals or simultaneous confidence bands for the latent probability surface, remains an important direction for future research.
 In addition, the full BKP and DKP implementations remain quadratic full-kernel methods in memory, whereas TwinBKP and TwinDKP provide scalable global-local approximations for larger datasets.
 
 Future development directions include extending the BKP framework to support more complex data structures, such as multivariate responses, functional data, time series, and combinations of qualitative and quantitative covariates.
@@ -1612,7 +1615,7 @@ For example, negative-binomial-type likelihoods may be useful for over-dispersed
 Geometric likelihoods, as special cases of negative-binomial models, may also be useful for modeling waiting times or the number of trials until the first success in reliability, survival, and event-process applications.
 Developing such extensions would require likelihood-specific conjugate or approximate updating schemes, together with appropriate uncertainty calibration and model-selection criteria.
 
-Finally, we welcome contributions from the community and invite developers to participate in the ongoing maintenance and extension of the package by submitting issues or pull requests through the \href{https://github.com/Jiangyan-Zhao/BKP}{\textcolor{blue}{\pkg{BKP} GitHub repository}}.
+Finally, we welcome contributions from the community and invite developers to participate in the ongoing maintenance and extension of the package by submitting issues or pull requests through the \href{https://github.com/Jiangyan-Zhao/BKP}{\pkg{BKP} GitHub repository}.
 
 
 %% -- Optional special unnumbered sections -------------------------------------
@@ -1625,7 +1628,7 @@ GPU acceleration was not used, and all methods were run using their default sing
 The computation times in Figure~\ref{fig:elapsed_time} are averages over 20 independent repetitions, whereas those in Table~\ref{tab:model_comparison} are reported from a single run.
 
 Complete reproducibility materials for this article are available from the \href{https://github.com/Jiangyan-Zhao/BKP-paper}
-{\textcolor{blue}{\pkg{BKP}-paper reproducibility repository}}.
+{\pkg{BKP}-paper reproducibility repository}.
 The repository contains the analysis scripts, data-processing code, generated figures, and numerical results for the illustrative examples, real-data applications, and appendix simulation.
 The computational environment is recorded in \code{renv.lock} and can be restored using \code{renv::restore()}.
 The main analysis workflow can be run from the repository root using \code{source("code/run_all.R")}; instructions for rerunning the computationally intensive timing experiments are provided in the repository README.
