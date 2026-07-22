@@ -1751,8 +1751,38 @@ non-binomial outcome families
 \end{columns}
 
 
+
 <!-- --- -->
 
-<!-- ```{r, echo=FALSE, fig.align='center', out.width='60%'} -->
-<!-- knitr::include_graphics("Thanks.png") -->
-<!-- ``` -->
+<!-- \vfill -->
+
+<!-- \begin{center} -->
+
+<!-- {\usebeamercolor[fg]{structure} -->
+<!-- \fontsize{42}{50}\selectfont -->
+<!-- Thank you -->
+<!-- \par} -->
+
+<!-- \vspace{0.35em} -->
+
+<!-- {\usebeamercolor[fg]{structure} -->
+<!-- \begin{tikzpicture}[baseline] -->
+<!--   \draw[color=fg, line width=1.2pt] -->
+<!--     (-1.8,0) -- (-0.35,0); -->
+<!--   \fill[color=fg] -->
+<!--     (0,0) circle (2.3pt); -->
+<!--   \draw[color=fg, line width=1.2pt] -->
+<!--     (0.35,0) -- (1.8,0); -->
+<!-- \end{tikzpicture} -->
+<!-- } -->
+
+<!-- \vspace{0.75em} -->
+
+<!-- {\usebeamercolor[fg]{normal text} -->
+<!-- \fontsize{22}{28}\selectfont -->
+<!-- Questions? -->
+<!-- \par} -->
+
+<!-- \end{center} -->
+
+<!-- \vfill -->

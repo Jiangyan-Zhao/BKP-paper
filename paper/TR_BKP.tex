@@ -469,7 +469,7 @@ where $k_g$ is a global kernel chosen from the implemented kernel family in Tabl
 Second, this global-informed distribution is updated using the local subset:
 \begin{align}
 	\pi(\vec{x})\mid \mathcal{D}_{U(\vec{x})} 
-	&\sim \mathrm{Beta}(\alpha_T(\vec{x}),\beta_T(\vec{x})), \notag\\
+	&\sim \mathrm{Beta}(\alpha_U(\vec{x}),\beta_U(\vec{x})), \notag\\
 	\alpha_U(\vec{x}) 
 	&= \alpha_G(\vec{x}) 
 	+ \sum_{i\in L(\vec{x})} k_\ell(\vec{x},\vec{x}_i;\theta_\ell)y_i, \label{eq:twin-bkp}\\
