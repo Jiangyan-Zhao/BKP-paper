@@ -4,7 +4,7 @@ shorttitle: "BKP"
 # date: "2026.04.11"
 header-includes:
   - \AtBeginDocument{\author[Jiangyan Zhao (ECNU)]{Jiangyan Zhao}}
-  - \AtBeginDocument{\date[2026.07.24 (Kunming)]{2026.07.24}}
+  - \AtBeginDocument{\date[2026.08.08 (JiNan)]{2026.08.08}}
   - \renewcommand*{\bibfont}{\footnotesize}
   - \usepackage{graphicx}
   - \graphicspath{{../code/figure/}}
