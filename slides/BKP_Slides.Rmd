@@ -1455,9 +1455,9 @@ Local kernel: Wendland
 \toprule
 Model & AUC & Brier score & Elapsed time (s) \\
 \midrule
-BKP     & 0.888 & 0.0691 & 8.51 \\
-TwinBKP & 0.912 & 0.0669 & 0.05 \\
-LGP \citep{golding2016fast}     & 0.852 & 0.0798 & 535.50 \\
+BKP     & 0.888 & 0.0691 & 9.04 \\
+TwinBKP & 0.913 & 0.0674 & 0.05 \\
+LGP \citep{golding2016fast}     & 0.852 & 0.0798 & 541.82 \\
 \bottomrule
 \end{tabular}
 \end{center}
