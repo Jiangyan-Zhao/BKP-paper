@@ -264,9 +264,9 @@ make_rast <- function(vals, template) {
   r <- rast(
     template[[1]]
   )
-  
+
   values(r) <- vals
-  
+
   return(r)
 }
 
@@ -461,7 +461,7 @@ t1 <- system.time({
     r0 = 0.1,
     loss = "log_loss"
   )
-  
+
   bkp_pred_test <- predict(
     bkp_fit,
     Xnew = X_test
@@ -511,7 +511,7 @@ t2 <- system.time({
     r0 = 0.1,
     loss = "log_loss"
   )
-  
+
   twin_pred_test <- predict(
     twin_fit,
     Xnew = X_test
@@ -557,14 +557,14 @@ t3 <- system.time({
     cf = cf_sexp(),
     lik = lik_bernoulli()
   )
-  
+
   gp <- gp_optim(
     gp,
     X_train,
     y_train,
     verbose = FALSE
   )
-  
+
   gp_pred_test <- gp_pred(
     gp,
     X_test,
@@ -607,79 +607,12 @@ cat("\n=============================================================\n")
 cat("  Comparison: Mourning Warbler (8 bio vars, r0 = 0.1)\n")
 cat("=============================================================\n")
 
-for (nm in names(all_rocs)) {
-  auc_value <- as.numeric(
-    auc(
-      all_rocs[[nm]]
-    )
-  )
-  
-  brier_score <- mean(
-    (all_preds[[nm]] - y_test)^2
-  )
-  
-  cat(
-    sprintf(
-      "  %-12s | AUC: %.3f | Brier: %.6f | Time: %.2f s\n",
-      nm,
-      auc_value,
-      brier_score,
-      times[nm]
-    )
-  )
-}
-
-
-## Save elapsed times to CSV.
-dir.create(
-  "code/result",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-
-times_df <- data.frame(
-  method = names(times),
-  elapsed_seconds = unname(times),
-  stringsAsFactors = FALSE
-)
-
-write.csv(
-  times_df,
-  "code/result/mourning_warbler_times.csv",
-  row.names = FALSE
-)
-
-
-## -------------------------------------------------------------------------
-## ROC comparison figure
-## -------------------------------------------------------------------------
-
-## Construct a common ROC figure for BKP, TwinBKP, and LGP. The legend reports
-## the test-set AUC for each method.
-n_methods <- length(
-  all_rocs
-)
-
-cols <- c(
-  "#1c61b6",
-  "#fdae61",
-  "#d7191c"
-)
-
-nm_pad <- format(
-  names(all_rocs),
-  justify = "none",
-  width = max(
-    nchar(
-      names(all_rocs)
-    )
-  )
-)
-
-legend_lines <- sprintf(
-  "%s  (AUC=%.3f)",
-  nm_pad,
-  vapply(
+## Collect all Table 3 quantities in one data frame so that the manuscript,
+## console output, and machine-readable replication result are based on the
+## same final analysis run.
+results_df <- data.frame(
+  Model = names(all_rocs),
+  AUC = vapply(
     all_rocs,
     function(x) {
       as.numeric(
@@ -687,41 +620,57 @@ legend_lines <- sprintf(
       )
     },
     numeric(1)
-  )
+  ),
+  `Brier score` = vapply(
+    names(all_preds),
+    function(nm) {
+      mean(
+        (all_preds[[nm]] - y_test)^2
+      )
+    },
+    numeric(1)
+  ),
+  `Elapsed time (s)` = unname(
+    times[
+      names(all_rocs)
+    ]
+  ),
+  check.names = FALSE,
+  stringsAsFactors = FALSE
 )
 
-pdf(
-  "code/figure/mourning_warbler_roc_comparison.pdf",
-  width = 6,
-  height = 6
-)
-
-plot(
-  all_rocs[[1]],
-  col = cols[1],
-  lwd = 2,
-  main = "ROC Curve: Mourning Warbler"
-)
-
-for (i in seq_len(n_methods)[-1]) {
-  lines(
-    all_rocs[[i]],
-    col = cols[i],
-    lwd = 2
+## Print the performance summary using the same display precision as Table 3:
+## three decimal places for AUC, four for the Brier score, and two for elapsed
+## time.
+for (i in seq_len(nrow(results_df))) {
+  cat(
+    sprintf(
+      "  %-12s | AUC: %.3f | Brier: %.4f | Time: %.2f s\n",
+      results_df$Model[i],
+      results_df$AUC[i],
+      results_df[["Brier score"]][i],
+      results_df[["Elapsed time (s)"]][i]
+    )
   )
 }
 
-legend(
-  "bottomright",
-  legend = legend_lines,
-  col = cols[seq_len(n_methods)],
-  lwd = 2,
-  bty = "o",
-  cex = 0.85,
-  bg = "white"
+
+## Save the Table 3 results to a machine-readable CSV file.
+##
+## The CSV retains the full numerical precision returned by the analysis.
+## Rounding to three decimal places for AUC, four for the Brier score, and two
+## for elapsed time is applied only when the values are displayed in Table 3.
+dir.create(
+  "code/result",
+  recursive = TRUE,
+  showWarnings = FALSE
 )
 
-dev.off()
+write.csv(
+  results_df,
+  "code/result/mourning_warbler_results.csv",
+  row.names = FALSE
+)
 
 
 ## -------------------------------------------------------------------------
@@ -770,19 +719,19 @@ for (method in names(all_preds)) {
       method
     )
   )
-  
+
   ## Allocate full-length vectors so that predictions can later be inserted
   ## directly into the original raster geometry.
   gm <- rep(
     NA_real_,
     grid_n
   )
-  
+
   gv <- rep(
     NA_real_,
     grid_n
   )
-  
+
   if (any(grid_valid)) {
     ## Construct the complete-case covariate matrix in the same variable order
     ## as the training data.
@@ -791,7 +740,7 @@ for (method in names(all_preds)) {
       bio_cols,
       drop = FALSE
     ]
-    
+
     if (method == "LGP") {
       ## Evaluate LGP raster predictions in chunks to control memory use.
       ##
@@ -800,7 +749,7 @@ for (method in names(all_preds)) {
       chunk_size <- 5000
       n_valid <- nrow(X_grid)
       valid_idx <- which(grid_valid)
-      
+
       for (k in seq(
         from = 1,
         to = n_valid,
@@ -810,28 +759,28 @@ for (method in names(all_preds)) {
           k + chunk_size - 1,
           n_valid
         )
-        
+
         idx <- k:idx_end
-        
+
         chunk <- X_grid[
           idx,
           ,
           drop = FALSE
         ]
-        
+
         pred_chunk <- gp_pred(
           gp,
           chunk,
           transform = TRUE,
           var = TRUE
         )
-        
+
         gm[
           valid_idx[idx]
         ] <- as.vector(
           pred_chunk$mean
         )
-        
+
         gv[
           valid_idx[idx]
         ] <- as.vector(
@@ -846,18 +795,18 @@ for (method in names(all_preds)) {
       } else {
         twin_fit
       }
-      
+
       pred_grid <- predict(
         fit_obj,
         Xnew = X_grid
       )
-      
+
       gm[
         grid_valid
       ] <- as.vector(
         pred_grid$mean
       )
-      
+
       gv[
         grid_valid
       ] <- as.vector(
@@ -865,7 +814,7 @@ for (method in names(all_preds)) {
       )
     }
   }
-  
+
   raster_preds[[method]] <- list(
     mean = gm,
     variance = gv
@@ -911,28 +860,28 @@ for (method in names(raster_preds)) {
       method
     )
   )
-  
+
   rp <- raster_preds[[method]]
-  
-  
+
+
   ## -----------------------------------------------------------------------
   ## Predicted probability-of-presence map
   ## -----------------------------------------------------------------------
-  
+
   ## Convert the vector of predicted probabilities back to a raster.
   r_prob <- make_rast(
     rp$mean,
     na_clim
   )
-  
+
   ## Convert the raster to a data frame for ggplot2.
   df_prob <- as.data.frame(
     r_prob,
     xy = TRUE
   )
-  
+
   colnames(df_prob)[3] <- "prob"
-  
+
   ## Construct the predicted probability-of-presence map. All models use the
   ## common probability range [0, 1].
   p_prob <- ggplot() +
@@ -1010,9 +959,9 @@ for (method in names(raster_preds)) {
         size = 10
       )
     )
-  
+
   sub_idx <- sub_idx + 1
-  
+
   ## Individual probability maps can be saved by uncommenting the following
   ## code.
   # ggsave(
@@ -1031,36 +980,36 @@ for (method in names(raster_preds)) {
   #   height = 3.8,
   #   dpi = 300
   # )
-  
-  
+
+
   ## -----------------------------------------------------------------------
   ## Predictive variance map
   ## -----------------------------------------------------------------------
-  
+
   ## Convert the vector of predictive variances back to a raster.
   r_var <- make_rast(
     rp$variance,
     na_clim
   )
-  
+
   ## Convert the variance raster to a data frame for ggplot2.
   df_var <- as.data.frame(
     r_var,
     xy = TRUE
   )
-  
+
   colnames(df_var)[3] <- "var"
-  
+
   ## Determine a method-specific upper limit for the variance map.
   vmax <- max(
     rp$variance,
     na.rm = TRUE
   )
-  
+
   vlim <- ceiling(
     vmax * 10
   ) / 10
-  
+
   ## Construct the predictive variance map.
   p_var <- ggplot() +
     geom_tile(
@@ -1141,9 +1090,9 @@ for (method in names(raster_preds)) {
         size = 10
       )
     )
-  
+
   sub_idx <- sub_idx + 1
-  
+
   ## Individual variance maps can be saved by uncommenting the following code.
   # ggsave(
   #   sprintf(
@@ -1161,7 +1110,7 @@ for (method in names(raster_preds)) {
   #   height = 3.8,
   #   dpi = 300
   # )
-  
+
   ## Store the model-specific plots for final figure assembly.
   all_probs[[method]] <- p_prob
   all_vars[[method]] <- p_var

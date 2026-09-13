@@ -1546,7 +1546,7 @@ R> gp_pred <- gp_pred(gp, X_test, transform = TRUE)
 		Model & AUC & Brier score & Elapsed time (s) \\
 		\midrule
 		BKP     & 0.888 & 0.0691 & 8.51 \\
-		TwinBKP & 0.912 & 0.0669 & 0.05 \\
+		TwinBKP & 0.913 & 0.0674 & 0.05 \\
 		LGP     & 0.852 & 0.0798 & 535.50 \\
 		\bottomrule
 	\end{tabular}
@@ -1559,7 +1559,7 @@ R> gp_pred <- gp_pred(gp, X_test, transform = TRUE)
 Predictive performance on the spatially withheld testing set is summarized using the area under the receiver operating characteristic curve (AUC) and the Brier score.
 Table~\ref{tab:model_comparison} reports the predictive performance and elapsed computation times for the three fitted models.
 
-On this predefined spatial test set, TwinBKP achieves the highest AUC of 0.912 and the lowest Brier score of 0.0669.
+On this predefined spatial test set, TwinBKP achieves the highest AUC of 0.913 and the lowest Brier score of 0.0674.
 The full BKP model obtains an AUC of 0.888 and a Brier score of 0.0691, while the corresponding LGP values are 0.852 and 0.0798.
 Thus, both BKP-based fits provide better discrimination and smaller probability errors than the fitted LGP model in this application.
 
