@@ -686,7 +686,7 @@ The function call
 \begin{Code}
 simulate(BKPmodel, nsim = 1, seed = NULL, Xnew = NULL, threshold = NULL, ...)
 \end{Code}
-generates posterior draws of the latent success probability from a fitted \class{BKP} model. For each input location in \code{Xnew}, or at the training locations when \code{Xnew = NULL}, the method obtains the corresponding posterior beta parameters and draws \code{nsim} samples from $\mathrm{Beta}(\alpha_n(\vec{x}), \beta_n(\vec{x}))$. The returned \code{samples} component is a matrix with $n_{\mathrm{new}}$ rows and \code{nsim} columns, where each column corresponds to one posterior draw of the probability surface. If \code{threshold} is supplied, the simulated probabilities are additionally converted to binary class labels by thresholding each posterior draw. The optional \code{seed} argument sets the random seed before simulation for reproducibility. These posterior draws are useful for uncertainty visualization and for downstream decision-making procedures that rely on sampling from the posterior probability surface, such as Thompson sampling \citep{Garnett2023BO}.
+generates pointwise posterior draws of the latent success probability from a fitted \class{BKP} model. For each input location in \code{Xnew}, or at the training locations when \code{Xnew = NULL}, the method obtains the corresponding posterior beta parameters and independently draws \code{nsim} samples from $\mathrm{Beta}(\alpha_n(\vec{x}), \beta_n(\vec{x}))$. The returned \code{samples} component is a matrix with $n_{\mathrm{new}}$ rows and \code{nsim} columns, where each column contains a collection of independent pointwise draws from the marginal beta posteriors evaluated at the supplied input locations. Thus, these draws should not be interpreted as realizations from a jointly dependent posterior process; in particular, duplicate input locations correspond to independent draws from the same marginal posterior distribution. If \code{threshold} is supplied, the simulated probabilities are additionally converted to binary class labels by thresholding each pointwise draw, and the optional \code{seed} argument sets the random seed for reproducibility. These draws are useful for visualizing marginal posterior uncertainty and for pointwise randomized decision rules. However, because the current BKP construction does not specify cross-location posterior dependence, they do not constitute coherent posterior sample paths or random surfaces. Consequently, downstream procedures requiring function-level posterior samples, such as standard Thompson sampling over a continuous probability surface \citep{Garnett2023BO}, would require an additional joint dependence model.
 
 The function call
 \begin{Code}
@@ -790,7 +790,7 @@ R> sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 	\hfill 
 	\begin{subfigure}{0.49\textwidth}
 		\includegraphics[width=\linewidth]{ex1_sim.pdf}
-		\caption{Posterior samples of Example 1}
+		\caption{Pointwise posterior draws for Example 1}
 		\label{fig:ex1_sim}
 	\end{subfigure}
 	\medskip
@@ -802,11 +802,11 @@ R> sim <- simulate(BKP_model_1D_1, nsim = 3, Xnew = Xnew)
 	\hfill 
 	\begin{subfigure}{0.49\textwidth}
 		\includegraphics[width=\linewidth]{ex2_sim.pdf}
-		\caption{Posterior samples of Example 2}
+		\caption{Pointwise posterior draws for Example 2}
 		\label{fig:ex2_sim}
 	\end{subfigure} 
 	
-	\caption{Posterior inference and simulation results from the fitted BKP models}
+	\caption{Posterior inference and pointwise simulation results from the fitted BKP models. In panels (b) and (d), each displayed curve connects independent draws from the marginal beta posteriors at the plotted input locations for visualization; the connected curves should not be interpreted as realizations from a jointly dependent posterior process.}
 	\label{fig:BKP_1D}
 \end{figure}
 
