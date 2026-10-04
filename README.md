@@ -1,7 +1,8 @@
 # BKP: An R Package for Beta Kernel Process Modeling
 
 This repository contains the reproducibility materials, manuscript source
-files, and presentation slides for the BKP software paper.
+files, and presentation slides for the BKP software paper, accepted for
+publication in the **Journal of Statistical Software**.
 
 It includes the analysis scripts, data-processing code, generated figures,
 numerical results, manuscript files, and Beamer presentation materials.
@@ -21,7 +22,7 @@ available at [`slides/BKP_Slides.pdf`](slides/BKP_Slides.pdf).
 - **Interactive website:** [BKP project website](https://jiangyan-zhao.github.io/BKP-website/)
 - **R package:** [BKP on CRAN](https://cran.r-project.org/web/packages/BKP/BKP.html)
 - **Package development:** [Jiangyan-Zhao/BKP](https://github.com/Jiangyan-Zhao/BKP)
-- **Paper:** [arXiv:2508.10447](https://arxiv.org/abs/2508.10447)
+- **Paper:** Accepted for publication in *Journal of Statistical Software*; [arXiv:2508.10447](https://arxiv.org/abs/2508.10447)
 - **Presentation slides:** [`slides/BKP_Slides.pdf`](slides/BKP_Slides.pdf)
 
 ## Repository structure
